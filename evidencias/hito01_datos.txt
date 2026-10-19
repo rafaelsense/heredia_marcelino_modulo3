@@ -1,0 +1,11 @@
+{
+  "base_datos": "logistica.db",
+  "registros": {
+    "parametros_escenario": 1,
+    "clientes": 3,
+    "productos": 2,
+    "inventario": 2,
+    "ventas": 6,
+    "reservas_capacidad": 2
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "caso_id": "LOG-001",
+  "variante": "Logística",
+  "semilla": 6739,
+  "fecha_referencia": "2026-03-16",
+  "capacidad_diaria": 6,
+  "ventana_entrega_dias": 3,
+  "costo_extraordinario_usd": 400
+}
+{
+  "caso_id": "LOG-001",
+  "variante": "Logística",
+  "semilla": 6739,
+  "fecha_referencia": "2026-03-16",
+  "capacidad_diaria": 6,
+  "ventana_entrega_dias": 3,
+  "costo_extraordinario_usd": 400
+}

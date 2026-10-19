@@ -1,0 +1,12 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.0, pytest-9.1.1, pluggy-1.7.0
+rootdir: D:\heredia_marcelino_modulo3
+configfile: pyproject.toml
+testpaths: tests
+collected 18 items
+
+tests\test_config_caso.py ...                                            [ 16%]
+tests\test_inicializar_datos.py ..                                       [ 27%]
+tests\test_reglas.py .............                                       [100%]
+
+============================= 18 passed in 0.38s ==============================

@@ -1,0 +1,14 @@
+[
+  {"q": "¿Cuál es la política para comprometer una fecha de entrega?", "expected": "rag"},
+  {"q": "¿Qué diferencia hay entre despacho normal y extraordinario según la política?", "expected": "rag"},
+  {"q": "¿Quién aprueba un despacho extraordinario?", "expected": "rag"},
+  {"q": "¿Cuántas unidades de EDGE-ORIN vendimos a C-1003?", "expected": "sql"},
+  {"q": "¿Cuál fue el ingreso histórico de CAM-IP67 en el primer trimestre?", "expected": "sql"},
+  {"q": "Muéstrame las ventas históricas del cliente C-1004.", "expected": "sql"},
+  {"q": "¿Qué existencias hay de EDGE-ORIN en ALM-LIM?", "expected": "tools"},
+  {"q": "¿Qué capacidad de despacho queda para el 2026-03-18?", "expected": "tools"},
+  {"q": "Evalúa y confirma 6 EDGE-ORIN para C-1003 con entrega el 2026-03-19.", "expected": "workflow"},
+  {"q": "Evaluar 12 EDGE-ORIN para C-1003 con entrega el siguiente día hábil.", "expected": "workflow"},
+  {"q": "Necesito una entrega urgente de equipos.", "expected": "clarify"},
+  {"q": "¿Qué significa SKU?", "expected": "direct"}
+]

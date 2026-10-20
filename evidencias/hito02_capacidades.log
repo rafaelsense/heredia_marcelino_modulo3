@@ -1,0 +1,60 @@
+{
+  "cliente": {
+    "ok": true,
+    "cliente": {
+      "cliente_id": "C-1003",
+      "nombre": "Andes Manufactura",
+      "region": "Lima",
+      "estado": "activo"
+    },
+    "source_ref": "[SQL:clientes]"
+  },
+  "stock_insuficiente": {
+    "ok": true,
+    "sku": "EDGE-ORIN",
+    "almacen": "ALM-LIM",
+    "cantidad_solicitada": 40,
+    "stock_disponible": 30,
+    "suficiente": false,
+    "source_ref": "[SQL:inventario]"
+  },
+  "capacidad_extraordinaria": {
+    "ok": true,
+    "almacen": "ALM-LIM",
+    "fecha": "2026-03-17",
+    "cantidad_solicitada": 12,
+    "capacidad_diaria": 6,
+    "capacidad_reservada": 0,
+    "capacidad_normal_disponible": 6,
+    "capacidad_extraordinaria_disponible": 12,
+    "suficiente_normal": false,
+    "suficiente_extraordinaria": true,
+    "source_ref": "[SQL:reservas_capacidad]"
+  },
+  "sql_filtrado": {
+    "ok": true,
+    "filters": {
+      "sku": "EDGE-ORIN",
+      "cliente_id": "C-1003",
+      "fecha_desde": null,
+      "fecha_hasta": null
+    },
+    "transacciones": 2,
+    "unidades": 12,
+    "ingresos_usd": 22800.0,
+    "source_ref": "[SQL:ventas]"
+  },
+  "sql_malicioso_controlado": {
+    "ok": true,
+    "filters": {
+      "sku": "EDGE-ORIN' OR 1=1 --",
+      "cliente_id": null,
+      "fecha_desde": null,
+      "fecha_hasta": null
+    },
+    "transacciones": 0,
+    "unidades": 0,
+    "ingresos_usd": 0.0,
+    "source_ref": "[SQL:ventas]"
+  }
+}

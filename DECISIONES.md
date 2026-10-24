@@ -46,3 +46,21 @@ Registro elaborado durante el desarrollo. Se ampliará en los hitos de workflow,
 - **Trade-off:** se usa una versión anterior del SDK y será necesario planificar una actualización controlada.
 - **Riesgo:** perder correcciones recientes o encontrar incompatibilidades en hitos posteriores, especialmente MCP.
 - **En producción:** mantener una matriz Python/SDK soportada, actualizar primero el runtime y validar todas las rutas antes de cambiar versiones.
+
+## 6. Workflow LangGraph con dependencias inyectables
+
+- **Problema:** orquestar extracción, datos operativos, capacidad, políticas y reglas sin esconder las ramas de negocio en una cadena `if/else`.
+- **Alternativas:** una función secuencial con condicionales, un único agente con todas las tools o un grafo con estado tipado.
+- **Decisión:** grafo LangGraph de nueve nodos con tres aristas condicionales, estado `EstadoLogistico` auditable y extractor, embedder y base de datos inyectables en `build_workflow`.
+- **Trade-off:** más estructura que una función, pero las rutas quedan explícitas, dibujables y preparadas para retry, checkpoint e HITL del Hito 04.
+- **Riesgo:** que el estado crezca con datos innecesarios; se mitiga con un contrato cerrado y una prueba que verifica sus campos.
+- **En producción:** persistir el estado con un checkpointer duradero, registrar cada transición y versionar el grafo junto con las reglas.
+
+## 7. Degradación documentada del nodo RAG sin credenciales
+
+- **Problema:** ejecutar el workflow completo sin `OPENAI_API_KEY` sin falsear la recuperación semántica.
+- **Alternativas:** abortar el flujo, simular fuentes o separar claramente la vía offline de la de producción.
+- **Decisión:** el nodo `recuperar_politica` degrada con advertencia porque la decisión depende de reglas deterministas; para la demostración offline se añadió `embedder_lexico` con caché propia (`.cache/politicas_index_lexico.json`).
+- **Trade-off:** el embedder léxico no es semántico; solo demuestra la mecánica del pipeline sin red.
+- **Riesgo:** presentar la recuperación léxica como equivalente a la de OpenAI; los documentos y evidencias la identifican explícitamente como vía offline.
+- **En producción:** esta vía no aplica; se usa el índice de embeddings del proveedor con su caché independiente.

@@ -1,0 +1,5 @@
+python: 3.11.0 (main, Oct 24 2022, 18:26:48) [MSC v.1933 64 bit (AMD64)]
+langgraph: 1.2.17
+langgraph-checkpoint: 4.3.0
+openai: 2.9.0
+openai-agents: 0.0.17

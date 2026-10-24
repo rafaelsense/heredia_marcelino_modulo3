@@ -80,7 +80,43 @@ La ejecución real del modelo/híbrido y del índice RAG con OpenAI quedó pendi
 
 ## Hito 03 — Workflow con estado
 
-**Estado:** pendiente.
+**Estado:** completado y pendiente de revisión del estudiante.
+
+### Qué se construyó
+
+- Grafo LangGraph con nueve nodos: `extraer_solicitud`, `cargar_datos_operativos`, `consultar_capacidad`, `recuperar_politica`, `evaluar_reglas`, `confirmar_compromiso`, `marcar_excepcion`, `cerrar_rechazo` y `cerrar_aclaracion`.
+- Tres aristas condicionales: tras extracción (aclaración o datos), tras datos operativos (rechazo anticipado o capacidad) y tras evaluación (directo, excepción o rechazo).
+- Estado tipado `EstadoLogistico` con identidad del caso, sustento de la decisión, fuentes citables acumulativas y marcador de aprobación para el HITL del Hito 04.
+- Contrato `SolicitudLogistica` con validación Pydantic de cliente, SKU, cantidad positiva y fecha ISO.
+- Extractor LLM inyectable; el modo offline usa entrada estructurada y el embedder léxico local, sin llamadas externas.
+- CLI `python -m agente_logistico` con `--id-hilo`, campos estructurados o `--solicitud` en lenguaje natural.
+- Documentación del grafo con diagrama Mermaid y justificación del estado en `docs/workflow.md`.
+- Doce pruebas nuevas del workflow; la suite completa llega a 66 pruebas.
+
+### Qué falló
+
+La consola de Windows mostró caracteres acentuados corruptos al capturar salidas (`estándar` como `estndar`); se resolvió capturando las evidencias con `PYTHONIOENCODING=utf-8`. No hubo fallos funcionales: `langgraph 1.2.17` se integró sin conflicto con los pins `openai-agents==0.0.17` y `openai==2.9.0`.
+
+### Qué aprendí
+
+Las salidas anticipadas (cliente bloqueado, SKU inexistente) son más claras como aristas condicionales que como excepciones dentro de los nodos. También comprobé que la caché RAG debe separarse por tipo de embedder: el índice léxico offline usa `.cache/politicas_index_lexico.json` para no mezclar dimensiones con el índice de OpenAI.
+
+### Qué decisión cambió después de probar
+
+El nodo `recuperar_politica` degrada con advertencia en lugar de abortar cuando no hay credenciales: la decisión del compromiso depende de reglas deterministas, no del documento recuperado. Se añadió el embedder léxico solo como vía de demostración offline; la recuperación de producción sigue siendo la de OpenAI.
+
+### Evidencia
+
+- `evidencias/hito03_uv_sync.log`
+- `evidencias/hito03_versiones.log`
+- `evidencias/hito03_pytest.log`
+- `evidencias/hito03_cli_directo.log`
+- `evidencias/hito03_cli_excepcion.log`
+- `evidencias/hito03_cli_rechazo.log`
+- `evidencias/hito03_cli_bloqueado.log`
+- `docs/workflow.md`
+
+La extracción con LLM en lenguaje natural quedó pendiente porque no hay `OPENAI_API_KEY` configurada; las ejecuciones de evidencia usan entrada estructurada y el embedder léxico, y no se presentan como llamadas reales al proveedor.
 
 ## Hito 04 — Retry, checkpoint y HITL
 

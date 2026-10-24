@@ -1,0 +1,39 @@
+{
+  "escenario": {
+    "caso_id": "LOG-001",
+    "variante": "Logística",
+    "semilla": 6739,
+    "fecha_referencia": "2026-03-16",
+    "capacidad_diaria": 6,
+    "ventana_entrega_dias": 3,
+    "costo_extraordinario_usd": 400
+  }
+}
+{
+  "caso_id": "LOG-001",
+  "semilla": 6739,
+  "id_solicitud": "demo-bloqueado",
+  "solicitud_original": "2 x CAM-IP67 para C-1005 el 2026-03-19 desde ALM-LIM",
+  "solicitud": {
+    "cliente_id": "C-1005",
+    "sku": "CAM-IP67",
+    "cantidad": 2,
+    "fecha_entrega": "2026-03-19",
+    "almacen": "ALM-LIM"
+  },
+  "cliente": {
+    "cliente_id": "C-1005",
+    "nombre": "Minera Sur",
+    "region": "Arequipa",
+    "estado": "bloqueado"
+  },
+  "stock_disponible": null,
+  "capacidad": null,
+  "evaluacion": null,
+  "fuentes": [
+    "[SQL:clientes]"
+  ],
+  "aprobacion": null,
+  "estado": "rechazado",
+  "mensaje": "Compromiso rechazado. El cliente C-1005 está bloqueado; no se puede confirmar."
+}

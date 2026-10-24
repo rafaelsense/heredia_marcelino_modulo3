@@ -59,7 +59,10 @@ async def answer(query: str, strategy: str = "deterministic") -> tuple[RouteDeci
     if decision.route == Route.WORKFLOW:
         return decision, FinalAnswer(
             answer="La solicitud corresponde al workflow de compromiso de entrega.",
-            warnings=["La ejecución del workflow se implementará en el Hito 03."],
+            warnings=[
+                "Ejecútalo con: python -m agente_logistico "
+                "(--cliente --sku --cantidad --fecha, o --solicitud con API)."
+            ],
         )
 
     agent = Agent[AppContext](

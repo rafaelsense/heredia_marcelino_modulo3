@@ -137,3 +137,63 @@ uv run pytest
 Resultado: **54 passed**. Salida: `evidencias/hito02_pytest.log`.
 
 La cobertura acumulada incluye Hito 01, contratos, 12 rutas, RAG, servicios SQL, tres tools semánticas, errores de datos y orquestación segura de `CLARIFY`/`WORKFLOW`.
+
+## Hito 03
+
+### Instalación y versiones
+
+```bash
+uv sync
+```
+
+Se añadió `langgraph` sin conflicto con los pins existentes. Combinación comprobada:
+
+```text
+langgraph=1.2.17
+langgraph-checkpoint=4.3.0
+openai-agents=0.0.17
+openai=2.9.0
+```
+
+Salidas: `evidencias/hito03_uv_sync.log` y `evidencias/hito03_versiones.log`.
+
+### Ejecución del workflow (modo offline)
+
+Las cuatro rutas del grafo se ejecutaron con entrada estructurada y el embedder léxico local, sin credenciales externas:
+
+```bash
+uv run python -m agente_logistico --cliente C-1003 --sku EDGE-ORIN --cantidad 6 --fecha 2026-03-19 --id-hilo demo-directo --offline
+uv run python -m agente_logistico --cliente C-1004 --sku EDGE-ORIN --cantidad 12 --fecha 2026-03-17 --id-hilo demo-excepcion --offline
+uv run python -m agente_logistico --cliente C-1003 --sku EDGE-ORIN --cantidad 40 --fecha 2026-03-19 --id-hilo demo-rechazo --offline
+uv run python -m agente_logistico --cliente C-1005 --sku CAM-IP67 --cantidad 2 --fecha 2026-03-19 --id-hilo demo-bloqueado --offline
+```
+
+Resultados:
+
+- **Directo** (`demo-directo`): estado `confirmado`, 6 unidades dentro de ventana estándar y capacidad normal 6. Evidencia: `evidencias/hito03_cli_directo.log`.
+- **Excepción** (`demo-excepcion`): estado `pendiente_aprobacion`, despacho extraordinario con costo USD 400 y marcador de aprobación del supervisor. Evidencia: `evidencias/hito03_cli_excepcion.log`.
+- **Rechazo por stock** (`demo-rechazo`): 40 unidades frente a stock 30, estado `rechazado` sin retry. Evidencia: `evidencias/hito03_cli_rechazo.log`.
+- **Rechazo anticipado** (`demo-bloqueado`): cliente C-1005 bloqueado; el grafo cierra sin evaluar capacidad ni reglas. Evidencia: `evidencias/hito03_cli_bloqueado.log`.
+
+En los cuatro casos el estado final incluye las fuentes `[SQL:clientes]`, `[SQL:inventario]`, `[SQL:reservas_capacidad]` y, cuando el flujo llegó al nodo documental, referencias `[RAG:...]` recuperadas con el embedder léxico offline.
+
+### Pruebas completas
+
+```bash
+uv run pytest
+```
+
+Resultado: **66 passed**. Salida: `evidencias/hito03_pytest.log`.
+
+Cobertura nueva del Hito 03:
+
+- Ruta directa confirmada con fuentes SQL y RAG.
+- Excepción pendiente de aprobación con costo USD 400.
+- Rechazos por stock insuficiente, cliente bloqueado y SKU inexistente.
+- Extracción inválida y entrada estructurada inválida derivan a aclaración sin ejecutar tools.
+- Sin extractor ni estructura, el workflow pide aclaración en lugar de fallar.
+- Las tres decisiones de negocio enrutan a ramas distintas.
+- El estado final no contiene claves ni campos fuera del contrato.
+- El grafo expone al menos nueve nodos.
+
+La extracción con LLM desde lenguaje natural no se ejecutó porque `OPENAI_API_KEY` no está configurada; el extractor es inyectable y queda listo para cuando se configure la credencial.

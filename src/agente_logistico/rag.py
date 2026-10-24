@@ -4,6 +4,8 @@ import hashlib
 import json
 import math
 import os
+import re
+import unicodedata
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -61,6 +63,24 @@ def _embed(textos: list[str], modelo: str) -> list[list[float]]:
     """Solicita embeddings al proveedor configurado en el entorno."""
     respuesta = OpenAI().embeddings.create(model=modelo, input=textos)
     return [item.embedding for item in respuesta.data]
+
+
+def embedder_lexico(textos: list[str], modelo: str, dimensiones: int = 512) -> list[list[float]]:
+    """Genera vectores deterministas por hashing de tokens, sin llamadas externas.
+
+    Solo para ejecución offline de demostración; la recuperación de producción
+    usa embeddings del proveedor configurado.
+    """
+    vectores: list[list[float]] = []
+    for texto in textos:
+        normalizado = unicodedata.normalize("NFKD", texto.lower())
+        normalizado = "".join(c for c in normalizado if not unicodedata.combining(c))
+        vector = [0.0] * dimensiones
+        for token in re.findall(r"[a-z0-9]+", normalizado):
+            cubeta = int(hashlib.sha256(token.encode("utf-8")).hexdigest(), 16) % dimensiones
+            vector[cubeta] += 1.0
+        vectores.append(vector)
+    return vectores
 
 
 def _load_or_build(

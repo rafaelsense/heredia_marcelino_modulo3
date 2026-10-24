@@ -27,10 +27,10 @@ def test_consulta_ambigua_se_aclara_sin_agente_ni_tools():
     assert respuesta.facts == []
 
 
-def test_ruta_workflow_queda_identificada_sin_simular_el_hito03():
+def test_ruta_workflow_indica_como_ejecutar_el_grafo():
     decision, respuesta = asyncio.run(
         answer("Evalúa y confirma 6 EDGE-ORIN para C-1003 con entrega el 2026-03-19.")
     )
 
     assert decision.route == Route.WORKFLOW
-    assert "Hito 03" in respuesta.warnings[0]
+    assert "python -m agente_logistico" in respuesta.warnings[0]

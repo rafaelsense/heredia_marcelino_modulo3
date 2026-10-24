@@ -6,7 +6,7 @@ Proyecto del Módulo 3 para evaluar compromisos de entrega B2B de AndesSupply.
 - **Variante:** Logística
 - **Caso:** `LOG-001`
 - **Semilla:** `6739`
-- **Estado actual:** Hito 02, Router + RAG + SQL + Tools
+- **Estado actual:** Hito 03, Workflow con estado
 
 La semilla determina la capacidad diaria, la ventana estándar de entrega y el costo del despacho extraordinario. Los datos son sintéticos y la fecha de referencia es fija para que las ejecuciones sean reproducibles.
 
@@ -15,7 +15,7 @@ La semilla determina la capacidad diaria, la ventana estándar de entrega y el c
 - Python 3.11 o superior
 - [uv](https://docs.astral.sh/uv/)
 
-Las pruebas y el router determinista no necesitan credenciales. Para ejecutar el router por modelo/híbrido o reconstruir el índice RAG real, copia `.env.example` como `.env` y configura `OPENAI_API_KEY`; el archivo `.env` no se versiona.
+Las pruebas, el router determinista y el workflow en modo offline no necesitan credenciales. Para ejecutar el router por modelo/híbrido, reconstruir el índice RAG real o extraer solicitudes en lenguaje natural, copia `.env.example` como `.env` y configura `OPENAI_API_KEY`; el archivo `.env` no se versiona.
 
 Por compatibilidad comprobada con Python 3.11.0, el proyecto fija `openai-agents==0.0.17` y `openai==2.9.0`.
 
@@ -31,9 +31,23 @@ uv run pytest
 uv run python -m agente_logistico.evaluacion_router --strategy deterministic
 ```
 
-Resultados actuales: 54 pruebas verdes y 12/12 casos del router determinista.
+Resultados actuales: 66 pruebas verdes y 12/12 casos del router determinista.
 
 `inicializar_datos` recrea únicamente la base sintética `data/logistica.db`. Esta base, `.env` y los entornos locales están excluidos de Git.
+
+## Workflow de compromiso de entrega
+
+```bash
+# Offline, sin credenciales: entrada estructurada + embedder léxico
+uv run python -m agente_logistico --cliente C-1003 --sku EDGE-ORIN \
+  --cantidad 6 --fecha 2026-03-19 --id-hilo demo-directo --offline
+
+# Con OPENAI_API_KEY: solicitud en lenguaje natural
+uv run python -m agente_logistico --id-hilo demo-llm \
+  --solicitud "Andes Manufactura (C-1003) necesita 6 EDGE-ORIN para el 2026-03-19"
+```
+
+El grafo, sus nodos y la justificación del estado se describen en `docs/workflow.md`.
 
 ## Credenciales opcionales
 
@@ -57,19 +71,23 @@ src/agente_logistico/
   reglas.py            # Reglas deterministas del compromiso de entrega
   contratos.py         # Rutas y respuestas tipadas
   servicios.py         # Capa única de acceso a datos de dominio
-  rag.py               # Índice local, caché y fuentes citables
+  rag.py               # Índice local, caché, fuentes citables y embedder offline
   router.py            # Router determinista, por modelo e híbrido
   tools.py             # Tools semánticas, SQL y RAG
   orquestador.py       # Restricción de capacidades por ruta
   evaluacion_router.py # Benchmark de 12 casos
+  estado_workflow.py   # Solicitud y estado tipado del grafo
+  workflow.py          # Grafo LangGraph del compromiso de entrega
+  cli.py               # CLI del workflow (estructurado o lenguaje natural)
 docs/
   politica_compromiso_entrega.md
   politica_despacho_extraordinario.md
   responsabilidades.md
+  workflow.md
 data/
   router_cases.json
-tests/                 # Pruebas del escenario, RAG, SQL, tools y router
+tests/                 # Pruebas del escenario, RAG, SQL, tools, router y workflow
 evidencias/            # Salidas reales de verificación
 ```
 
-La ruta `WORKFLOW` ya es reconocida por el router, pero su ejecución se implementará en el Hito 03. MCP pertenece al Hito 05.
+La ruta `WORKFLOW` ya ejecuta el grafo con estado; retry, checkpoint e HITL llegan en el Hito 04 y MCP en el Hito 05.

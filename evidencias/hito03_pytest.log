@@ -1,0 +1,19 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.0, pytest-9.1.1, pluggy-1.7.0
+rootdir: D:\AI-ENGINEER\AGENTES-IA-MCPS-RAG\heredia_marcelino_modulo3
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.15.1, langsmith-0.14.12
+collected 66 items
+
+tests\test_config_caso.py ...                                            [  4%]
+tests\test_contratos.py ...                                              [  9%]
+tests\test_inicializar_datos.py ..                                       [ 12%]
+tests\test_rag.py ....                                                   [ 18%]
+tests\test_reglas.py .............                                       [ 37%]
+tests\test_router.py ..............                                      [ 59%]
+tests\test_servicios.py ...........                                      [ 75%]
+tests\test_tools.py ....                                                 [ 81%]
+tests\test_workflow.py ............                                      [100%]
+
+============================= 66 passed in 2.72s ==============================

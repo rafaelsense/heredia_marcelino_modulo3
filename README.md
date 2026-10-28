@@ -87,6 +87,7 @@ src/agente_logistico/
   tools.py             # Tools semánticas, SQL y RAG
   orquestador.py       # Restricción de capacidades por ruta
   evaluacion_router.py # Benchmark de 12 casos
+  calibracion_rag.py   # Calibración medible del umbral de abstención RAG
   estado_workflow.py   # Solicitud y estado tipado del grafo
   workflow.py          # Grafo LangGraph del compromiso de entrega
   cli.py               # CLI del workflow (estructurado o lenguaje natural)

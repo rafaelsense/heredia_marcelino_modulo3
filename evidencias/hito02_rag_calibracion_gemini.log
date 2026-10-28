@@ -1,0 +1,83 @@
+{
+  "min_relevante": 0.7088,
+  "max_irrelevante": 0.5907,
+  "separable": true,
+  "umbral_actual": 0.65,
+  "mediciones": [
+    {
+      "q": "¿Cuál es la ventana de entrega estándar?",
+      "relevante": true,
+      "mejor_score": 0.7726,
+      "source_ref": "[RAG:politica_compromiso_entrega.md#Política de compromiso de entrega]"
+    },
+    {
+      "q": "¿Quién aprueba el despacho extraordinario?",
+      "relevante": true,
+      "mejor_score": 0.8409,
+      "source_ref": "[RAG:politica_despacho_extraordinario.md#Política de despacho extraordinario]"
+    },
+    {
+      "q": "¿Qué costo tiene un despacho extraordinario?",
+      "relevante": true,
+      "mejor_score": 0.8487,
+      "source_ref": "[RAG:politica_despacho_extraordinario.md#Política de despacho extraordinario]"
+    },
+    {
+      "q": "¿Qué es un compromiso de entrega B2B?",
+      "relevante": true,
+      "mejor_score": 0.7572,
+      "source_ref": "[RAG:politica_compromiso_entrega.md#Política de compromiso de entrega]"
+    },
+    {
+      "q": "¿Cómo se registra la trazabilidad de un despacho?",
+      "relevante": true,
+      "mejor_score": 0.721,
+      "source_ref": "[RAG:politica_despacho_extraordinario.md#Registro y trazabilidad]"
+    },
+    {
+      "q": "¿Qué pasa si la fecha pedida es muy temprana?",
+      "relevante": true,
+      "mejor_score": 0.7088,
+      "source_ref": "[RAG:politica_compromiso_entrega.md#Política de compromiso de entrega]"
+    },
+    {
+      "q": "órbitas planetarias y astronomía",
+      "relevante": false,
+      "mejor_score": 0.5742,
+      "source_ref": "[RAG:politica_despacho_extraordinario.md#Registro y trazabilidad]"
+    },
+    {
+      "q": "clima en montañas del sur",
+      "relevante": false,
+      "mejor_score": 0.5351,
+      "source_ref": "[RAG:politica_compromiso_entrega.md#Ventana estándar]"
+    },
+    {
+      "q": "recetas de cocina italiana",
+      "relevante": false,
+      "mejor_score": 0.5564,
+      "source_ref": "[RAG:politica_compromiso_entrega.md#Política de compromiso de entrega]"
+    },
+    {
+      "q": "resultados de fútbol del fin de semana",
+      "relevante": false,
+      "mejor_score": 0.5618,
+      "source_ref": "[RAG:politica_despacho_extraordinario.md#Política de despacho extraordinario]"
+    },
+    {
+      "q": "inversiones en criptomonedas",
+      "relevante": false,
+      "mejor_score": 0.5907,
+      "source_ref": "[RAG:politica_despacho_extraordinario.md#Registro y trazabilidad]"
+    },
+    {
+      "q": "biología marina de arrecifes",
+      "relevante": false,
+      "mejor_score": 0.5496,
+      "source_ref": "[RAG:politica_compromiso_entrega.md#Alcance]"
+    }
+  ],
+  "umbral_recomendado": 0.65,
+  "margen": 0.059,
+  "modelo_embeddings": "gemini-embedding-001"
+}

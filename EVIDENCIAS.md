@@ -215,6 +215,24 @@ Resultado: **12/12 (accuracy 1.0) en ambas estrategias**. El `--delay 13` respet
 
 `gemini-embedding-001` (3072 dimensiones) recupera la política correcta con scores 0.74–0.84 y se abstiene ante texto irrelevante con `RAG_MIN_SCORE=0.65` (su similitud coseno base es ~0.57, mayor que el umbral por defecto 0.25; la calibración quedó registrada como decisión de ingeniería). Evidencia: `evidencias/hito02_rag_gemini.log`.
 
+### Calibración medible del umbral de abstención
+
+```bash
+uv run python -m agente_logistico.calibracion_rag
+```
+
+El módulo `calibracion_rag.py` ejecuta 12 consultas etiquetadas (`data/rag_calibracion.json`: 6 relevantes, 6 irrelevantes), mide el mejor score de cada una y recomienda el umbral como el punto medio del hueco entre grupos. Resultado con `gemini-embedding-001`:
+
+```text
+min_relevante:      0.7088
+max_irrelevante:    0.5907
+separable:          True
+umbral_recomendado: 0.65   (margen: 0.059 a cada lado)
+umbral_actual:      0.65
+```
+
+La recomendación coincide con el valor configurado. Si los grupos se solaparan, el comando informaría el solapamiento y saldría con código de error en lugar de recomendar un umbral engañoso. Evidencia completa: `evidencias/hito02_rag_calibracion_gemini.log`.
+
 ### Workflow end-to-end en lenguaje natural
 
 ```bash

@@ -1,0 +1,14 @@
+[
+  {"q": "¿Cuál es la ventana de entrega estándar?", "relevante": true},
+  {"q": "¿Quién aprueba el despacho extraordinario?", "relevante": true},
+  {"q": "¿Qué costo tiene un despacho extraordinario?", "relevante": true},
+  {"q": "¿Qué es un compromiso de entrega B2B?", "relevante": true},
+  {"q": "¿Cómo se registra la trazabilidad de un despacho?", "relevante": true},
+  {"q": "¿Qué pasa si la fecha pedida es muy temprana?", "relevante": true},
+  {"q": "órbitas planetarias y astronomía", "relevante": false},
+  {"q": "clima en montañas del sur", "relevante": false},
+  {"q": "recetas de cocina italiana", "relevante": false},
+  {"q": "resultados de fútbol del fin de semana", "relevante": false},
+  {"q": "inversiones en criptomonedas", "relevante": false},
+  {"q": "biología marina de arrecifes", "relevante": false}
+]

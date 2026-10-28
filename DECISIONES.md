@@ -17,7 +17,7 @@ Registro elaborado durante el desarrollo. Se ampliará en los hitos de workflow,
 - **Alternativas:** incrustar las políticas en el prompt, consultar siempre una base vectorial externa o tratar los documentos como texto libre sin citas.
 - **Decisión:** indexar dos Markdown por secciones, usar embeddings, invalidar la caché por contenido/modelo y devolver `source_ref`; un score bajo produce ausencia de evidencia.
 - **Trade-off:** dependencia del proveedor de embeddings para reconstruir el índice y menor escalabilidad que una base vectorial.
-- **Riesgo:** confundir Top-K con relevancia o usar un índice obsoleto; se mitiga con umbral, fingerprint y pruebas de abstención.
+- **Riesgo:** confundir Top-K con relevancia o usar un índice obsoleto; se mitiga con umbral, fingerprint y pruebas de abstención. El umbral se calibra por modelo de embeddings con `calibracion_rag.py` (12 consultas etiquetadas, punto medio del hueco; con Gemini: 0.65, margen 0.059).
 - **En producción:** usar una base vectorial administrada, versionado documental, evaluación de recuperación y control de acceso por documento.
 
 ## 3. SQL parametrizado como capacidad acotada

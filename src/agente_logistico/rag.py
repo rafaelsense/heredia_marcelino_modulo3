@@ -12,6 +12,8 @@ from pathlib import Path
 
 from openai import OpenAI
 
+from .modelo import GEMINI_BASE_URL
+
 RUTA_RAIZ = Path(__file__).resolve().parents[2]
 DOCS_DIR = RUTA_RAIZ / "docs"
 CACHE_PATH = RUTA_RAIZ / ".cache" / "politicas_index.json"
@@ -59,9 +61,25 @@ def _cosine(a: list[float], b: list[float]) -> float:
     return sum(x * y for x, y in zip(a, b)) / (norma_a * norma_b)
 
 
+def _cliente_embeddings() -> OpenAI:
+    """Crea el cliente de embeddings según el proveedor configurado."""
+    provider = os.getenv("MODEL_PROVIDER", "openai")
+    if provider == "gemini":
+        return OpenAI(
+            base_url=os.getenv("PROVIDER_BASE_URL", GEMINI_BASE_URL),
+            api_key=os.environ["PROVIDER_API_KEY"],
+        )
+    if provider == "openai_compatible":
+        return OpenAI(
+            base_url=os.environ["PROVIDER_BASE_URL"],
+            api_key=os.environ["PROVIDER_API_KEY"],
+        )
+    return OpenAI()
+
+
 def _embed(textos: list[str], modelo: str) -> list[list[float]]:
     """Solicita embeddings al proveedor configurado en el entorno."""
-    respuesta = OpenAI().embeddings.create(model=modelo, input=textos)
+    respuesta = _cliente_embeddings().embeddings.create(model=modelo, input=textos)
     return [item.embedding for item in respuesta.data]
 
 

@@ -77,6 +77,9 @@ async def _ejecutar(argumentos: argparse.Namespace) -> dict:
 
 def main() -> None:
     """Imprime el escenario, ejecuta el workflow y muestra el estado final."""
+    from dotenv import load_dotenv
+
+    load_dotenv()
     argumentos = _parser().parse_args()
     print(json.dumps({"escenario": resumen_escenario()}, ensure_ascii=False, indent=2))
     estado = asyncio.run(_ejecutar(argumentos))

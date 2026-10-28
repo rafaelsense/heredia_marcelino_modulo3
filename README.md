@@ -55,11 +55,20 @@ El grafo, sus nodos y la justificación del estado se describen en `docs/workflo
 Copy-Item .env.example .env
 ```
 
+El proyecto admite dos proveedores, seleccionados con `MODEL_PROVIDER` en `.env`:
+
+- **OpenAI** (por defecto): completa `OPENAI_API_KEY`.
+- **Gemini** (endpoint OpenAI-compatible): usa `MODEL_PROVIDER=gemini`, tu clave en `PROVIDER_API_KEY`, `MODEL_NAME=gemini-2.5-flash` y `OPENAI_EMBEDDING_MODEL=text-embedding-004`. El bloque viene comentado en `.env.example`.
+
 Después de completar la clave en `.env`, pueden compararse las otras estrategias:
 
 ```bash
 uv run python -m agente_logistico.evaluacion_router --strategy model
 uv run python -m agente_logistico.evaluacion_router --strategy hybrid
+
+# Y el workflow con extracción en lenguaje natural:
+uv run python -m agente_logistico --id-hilo demo-llm \
+  --solicitud "Andes Manufactura (C-1003) necesita 6 EDGE-ORIN para el 2026-03-19"
 ```
 
 ## Estructura actual

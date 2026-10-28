@@ -60,7 +60,7 @@ El proyecto admite dos proveedores, seleccionados con `MODEL_PROVIDER` en `.env`
 - **OpenAI** (por defecto): `MODEL_PROVIDER=openai` y tu clave en `PROVIDER_API_KEY` (se acepta `OPENAI_API_KEY` como alias de compatibilidad).
 - **Gemini** (endpoint OpenAI-compatible): `MODEL_PROVIDER=gemini` y tu clave de Google AI Studio en `PROVIDER_API_KEY`.
 
-`MODEL_NAME` y `EMBEDDING_MODEL` tienen valores por defecto por proveedor (`gpt-4.1-mini`/`text-embedding-3-small` para OpenAI; `gemini-2.5-flash`/`text-embedding-004` para Gemini) y solo hace falta definirlos para cambiarlos.
+`MODEL_NAME` y `EMBEDDING_MODEL` tienen valores por defecto por proveedor (`gpt-4.1-mini`/`text-embedding-3-small` para OpenAI; `gemini-3.8-flash`/`gemini-embedding-001` para Gemini) y solo hace falta definirlos para cambiarlos.
 
 Después de completar la clave en `.env`, pueden compararse las otras estrategias:
 

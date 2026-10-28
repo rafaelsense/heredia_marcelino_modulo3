@@ -10,11 +10,11 @@ BASE_URLS = {
 }
 MODELOS_POR_DEFECTO = {
     "openai": "gpt-4.1-mini",
-    "gemini": "gemini-2.5-flash",
+    "gemini": "gemini-3.8-flash",
 }
 EMBEDDINGS_POR_DEFECTO = {
     "openai": "text-embedding-3-small",
-    "gemini": "text-embedding-004",
+    "gemini": "gemini-embedding-001",
 }
 
 

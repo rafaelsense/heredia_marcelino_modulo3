@@ -12,12 +12,11 @@ from pathlib import Path
 
 from openai import OpenAI
 
-from .modelo import GEMINI_BASE_URL
+from .modelo import modelo_embeddings, resolver_proveedor
 
 RUTA_RAIZ = Path(__file__).resolve().parents[2]
 DOCS_DIR = RUTA_RAIZ / "docs"
 CACHE_PATH = RUTA_RAIZ / ".cache" / "politicas_index.json"
-MODELO_EMBEDDINGS = "text-embedding-3-small"
 
 
 @dataclass(frozen=True)
@@ -63,18 +62,8 @@ def _cosine(a: list[float], b: list[float]) -> float:
 
 def _cliente_embeddings() -> OpenAI:
     """Crea el cliente de embeddings según el proveedor configurado."""
-    provider = os.getenv("MODEL_PROVIDER", "openai")
-    if provider == "gemini":
-        return OpenAI(
-            base_url=os.getenv("PROVIDER_BASE_URL", GEMINI_BASE_URL),
-            api_key=os.environ["PROVIDER_API_KEY"],
-        )
-    if provider == "openai_compatible":
-        return OpenAI(
-            base_url=os.environ["PROVIDER_BASE_URL"],
-            api_key=os.environ["PROVIDER_API_KEY"],
-        )
-    return OpenAI()
+    _, base_url, api_key = resolver_proveedor()
+    return OpenAI(api_key=api_key, **({"base_url": base_url} if base_url else {}))
 
 
 def _embed(textos: list[str], modelo: str) -> list[list[float]]:
@@ -110,7 +99,7 @@ def _load_or_build(
     """Reutiliza la caché o reconstruye el índice si cambia contenido o modelo."""
     chunks = cargar_chunks(docs_dir)
     fingerprint = _fingerprint(chunks)
-    modelo = os.getenv("OPENAI_EMBEDDING_MODEL", MODELO_EMBEDDINGS)
+    modelo = modelo_embeddings()
 
     if cache_path.exists():
         cache = json.loads(cache_path.read_text(encoding="utf-8"))
@@ -144,7 +133,7 @@ def search(
         docs_dir=docs_dir,
         cache_path=cache_path,
     )
-    modelo = os.getenv("OPENAI_EMBEDDING_MODEL", MODELO_EMBEDDINGS)
+    modelo = modelo_embeddings()
     vector_query = (embedder or _embed)([query], modelo)[0]
 
     candidatos = [

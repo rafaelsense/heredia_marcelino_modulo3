@@ -29,7 +29,7 @@ CONSULTA_POLITICA = (
 
 
 def extractor_llm() -> Extractor:
-    """Crea el extractor de producción; requiere OPENAI_API_KEY configurada."""
+    """Crea el extractor de producción; requiere PROVIDER_API_KEY configurada."""
     from agents import Agent, Runner
 
     from .modelo import build_model
@@ -81,7 +81,7 @@ def build_workflow(
                 if extractor is None:
                     raise ValueError(
                         "No hay extractor configurado: usa entrada estructurada "
-                        "o configura OPENAI_API_KEY para el extractor con LLM."
+                        "o configura PROVIDER_API_KEY para el extractor con LLM."
                     )
                 resultado = extractor(estado["solicitud_original"])
                 if inspect.isawaitable(resultado):

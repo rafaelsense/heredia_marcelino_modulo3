@@ -80,7 +80,7 @@ documentos crudos: solo lo necesario para decidir y auditar.
 uv run python -m agente_logistico --cliente C-1003 --sku EDGE-ORIN \
   --cantidad 6 --fecha 2026-03-19 --id-hilo demo-directo --offline
 
-# Lenguaje natural (requiere OPENAI_API_KEY en .env)
+# Lenguaje natural (requiere PROVIDER_API_KEY en .env)
 uv run python -m agente_logistico --id-hilo demo-llm \
   --solicitud "Andes Manufactura (C-1003) necesita 6 EDGE-ORIN para el 2026-03-19"
 ```

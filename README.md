@@ -15,7 +15,7 @@ La semilla determina la capacidad diaria, la ventana estándar de entrega y el c
 - Python 3.11 o superior
 - [uv](https://docs.astral.sh/uv/)
 
-Las pruebas, el router determinista y el workflow en modo offline no necesitan credenciales. Para ejecutar el router por modelo/híbrido, reconstruir el índice RAG real o extraer solicitudes en lenguaje natural, copia `.env.example` como `.env` y configura `OPENAI_API_KEY`; el archivo `.env` no se versiona.
+Las pruebas, el router determinista y el workflow en modo offline no necesitan credenciales. Para ejecutar el router por modelo/híbrido, reconstruir el índice RAG real o extraer solicitudes en lenguaje natural, copia `.env.example` como `.env` y configura `PROVIDER_API_KEY`; el archivo `.env` no se versiona.
 
 Por compatibilidad comprobada con Python 3.11.0, el proyecto fija `openai-agents==0.0.17` y `openai==2.9.0`.
 
@@ -42,7 +42,7 @@ Resultados actuales: 66 pruebas verdes y 12/12 casos del router determinista.
 uv run python -m agente_logistico --cliente C-1003 --sku EDGE-ORIN \
   --cantidad 6 --fecha 2026-03-19 --id-hilo demo-directo --offline
 
-# Con OPENAI_API_KEY: solicitud en lenguaje natural
+# Con PROVIDER_API_KEY: solicitud en lenguaje natural
 uv run python -m agente_logistico --id-hilo demo-llm \
   --solicitud "Andes Manufactura (C-1003) necesita 6 EDGE-ORIN para el 2026-03-19"
 ```
@@ -55,10 +55,12 @@ El grafo, sus nodos y la justificación del estado se describen en `docs/workflo
 Copy-Item .env.example .env
 ```
 
-El proyecto admite dos proveedores, seleccionados con `MODEL_PROVIDER` en `.env`:
+El proyecto admite dos proveedores, seleccionados con `MODEL_PROVIDER` en `.env`. La clave siempre va en `PROVIDER_API_KEY`, sea cual sea el proveedor:
 
-- **OpenAI** (por defecto): completa `OPENAI_API_KEY`.
-- **Gemini** (endpoint OpenAI-compatible): usa `MODEL_PROVIDER=gemini`, tu clave en `PROVIDER_API_KEY`, `MODEL_NAME=gemini-2.5-flash` y `OPENAI_EMBEDDING_MODEL=text-embedding-004`. El bloque viene comentado en `.env.example`.
+- **OpenAI** (por defecto): `MODEL_PROVIDER=openai` y tu clave en `PROVIDER_API_KEY` (se acepta `OPENAI_API_KEY` como alias de compatibilidad).
+- **Gemini** (endpoint OpenAI-compatible): `MODEL_PROVIDER=gemini` y tu clave de Google AI Studio en `PROVIDER_API_KEY`.
+
+`MODEL_NAME` y `EMBEDDING_MODEL` tienen valores por defecto por proveedor (`gpt-4.1-mini`/`text-embedding-3-small` para OpenAI; `gemini-2.5-flash`/`text-embedding-004` para Gemini) y solo hace falta definirlos para cambiarlos.
 
 Después de completar la clave en `.env`, pueden compararse las otras estrategias:
 

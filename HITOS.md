@@ -76,7 +76,7 @@ Las reglas del router son auditables, pero su vocabulario debe evaluarse con par
 - `evidencias/hito02_pytest.log`
 - `DECISIONES.md`
 
-La ejecución real del modelo/híbrido y del índice RAG con OpenAI quedó pendiente porque no hay `OPENAI_API_KEY` configurada; las pruebas de RAG usan embeddings deterministas sin red y no se presentan como una llamada real al proveedor.
+~~La ejecución real del modelo/híbrido y del índice RAG con OpenAI quedó pendiente porque no hay `OPENAI_API_KEY` configurada~~ **Actualización posterior:** se ejecutó con Gemini (`gemini-3.5-flash-lite` y `gemini-embedding-001`): router `model` 12/12, router `hybrid` 12/12 y RAG real con abstención calibrada (`RAG_MIN_SCORE=0.65`). Evidencias: `evidencias/hito02_router_model_gemini.log`, `evidencias/hito02_router_hybrid_gemini.log` y `evidencias/hito02_rag_gemini.log`. Las pruebas de RAG usan embeddings deterministas sin red y no se presentan como una llamada real al proveedor.
 
 ## Hito 03 — Workflow con estado
 
@@ -116,7 +116,7 @@ El nodo `recuperar_politica` degrada con advertencia en lugar de abortar cuando 
 - `evidencias/hito03_cli_bloqueado.log`
 - `docs/workflow.md`
 
-La extracción con LLM en lenguaje natural quedó pendiente porque no hay `OPENAI_API_KEY` configurada; las ejecuciones de evidencia usan entrada estructurada y el embedder léxico, y no se presentan como llamadas reales al proveedor.
+~~La extracción con LLM en lenguaje natural quedó pendiente porque no hay `OPENAI_API_KEY` configurada~~ **Actualización posterior:** se ejecutó con Gemini real. `demo-llm-directo` (“C-1003 necesita 6 EDGE-ORIN para el 2026-03-19”) terminó `confirmado` y `demo-llm-gemini` (“C-1004 pide 12 EDGE-ORIN urgente para el 2026-03-17”) terminó `pendiente_aprobacion` con costo USD 400. Evidencias: `evidencias/hito03_cli_llm_directo_gemini.log` y `evidencias/hito03_cli_llm_excepcion_gemini.log`. Las ejecuciones offline usan entrada estructurada y el embedder léxico, y no se presentan como llamadas reales al proveedor.
 
 ## Hito 04 — Retry, checkpoint y HITL
 

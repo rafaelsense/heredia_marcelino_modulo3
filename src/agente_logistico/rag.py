@@ -123,11 +123,18 @@ def search(
     embedder: Callable[[list[str], str], list[list[float]]] | None = None,
     docs_dir: Path = DOCS_DIR,
     cache_path: Path = CACHE_PATH,
-    min_score: float = 0.25,
+    min_score: float | None = None,
 ) -> list[dict]:
-    """Busca evidencia relevante y devuelve fuentes citables o una lista vacía."""
+    """Busca evidencia relevante y devuelve fuentes citables o una lista vacía.
+
+    El umbral se calibra por proveedor con `RAG_MIN_SCORE`: los embeddings de
+    Gemini concentran la similitud coseno en valores altos incluso para texto
+    irrelevante, así que requieren un umbral mayor que el embedder léxico.
+    """
     if not query.strip():
         raise ValueError("La consulta documental no puede estar vacía")
+    if min_score is None:
+        min_score = float(os.getenv("RAG_MIN_SCORE", "0.25"))
     chunks, vectores = _load_or_build(
         embedder=embedder,
         docs_dir=docs_dir,

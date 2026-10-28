@@ -64,3 +64,12 @@ Registro elaborado durante el desarrollo. Se ampliará en los hitos de workflow,
 - **Trade-off:** el embedder léxico no es semántico; solo demuestra la mecánica del pipeline sin red.
 - **Riesgo:** presentar la recuperación léxica como equivalente a la de OpenAI; los documentos y evidencias la identifican explícitamente como vía offline.
 - **En producción:** esta vía no aplica; se usa el índice de embeddings del proveedor con su caché independiente.
+
+## 8. Modelo Gemini más económico verificado con la clave real
+
+- **Problema:** elegir el modelo Gemini de menor costo sin asumir que el catálogo público aplica a cualquier clave.
+- **Alternativas:** `gemini-2.5-flash-lite` (el más barato del catálogo), `gemini-3.6-flash` (estable), `gemini-3.8-flash` (preview) y `gemini-3.5-flash-lite` (estable, económico).
+- **Decisión:** `gemini-3.5-flash-lite` como modelo por defecto para Gemini, tras probar cada candidato con la clave real: `2.5-flash-lite` ya no está disponible para usuarios nuevos (404), `3.6-flash` agotó su cuota diaria del nivel gratuito (20 solicitudes/día) y `3.8-flash` respondió 503 por alta demanda.
+- **Trade-off:** un modelo lite tiene menor capacidad de razonamiento; se mitiga manteniendo las decisiones de negocio en reglas deterministas y usando el LLM solo para clasificar y extraer.
+- **Riesgo:** los límites del nivel gratuito (5 solicitudes/minuto) obligan a espaciar las evaluaciones (`--delay`); un cambio de modelo exige recalibrar el umbral RAG (`RAG_MIN_SCORE`).
+- **En producción:** habilitar facturación, monitorear cuotas por modelo y fijar `MODEL_NAME` explícitamente en cada entorno.

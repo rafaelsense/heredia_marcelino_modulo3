@@ -1,0 +1,64 @@
+OPENAI_API_KEY is not set, skipping trace export
+{
+  "escenario": {
+    "caso_id": "LOG-001",
+    "variante": "Logística",
+    "semilla": 6739,
+    "fecha_referencia": "2026-03-16",
+    "capacidad_diaria": 6,
+    "ventana_entrega_dias": 3,
+    "costo_extraordinario_usd": 400
+  }
+}
+{
+  "caso_id": "LOG-001",
+  "semilla": 6739,
+  "id_solicitud": "demo-llm-directo",
+  "solicitud_original": "Andes Manufactura (C-1003) necesita 6 computadoras EDGE-ORIN para el 2026-03-19",
+  "solicitud": {
+    "cliente_id": "C-1003",
+    "sku": "EDGE-ORIN",
+    "cantidad": 6,
+    "fecha_entrega": "2026-03-19",
+    "almacen": "ALM-LIM"
+  },
+  "cliente": {
+    "cliente_id": "C-1003",
+    "nombre": "Andes Manufactura",
+    "region": "Lima",
+    "estado": "activo"
+  },
+  "stock_disponible": 30,
+  "capacidad": {
+    "ok": true,
+    "almacen": "ALM-LIM",
+    "fecha": "2026-03-19",
+    "cantidad_solicitada": 6,
+    "capacidad_diaria": 6,
+    "capacidad_reservada": 0,
+    "capacidad_normal_disponible": 6,
+    "capacidad_extraordinaria_disponible": 12,
+    "suficiente_normal": true,
+    "suficiente_extraordinaria": true,
+    "source_ref": "[SQL:reservas_capacidad]"
+  },
+  "evaluacion": {
+    "decision": "directo",
+    "tipo_despacho": "normal",
+    "motivo": "Entrega viable con capacidad y ventana estándar.",
+    "costo_extraordinario_usd": 0,
+    "fecha_minima_normal": "2026-03-19",
+    "capacidad_normal_disponible": 6,
+    "capacidad_extraordinaria_disponible": 12
+  },
+  "fuentes": [
+    "[SQL:clientes]",
+    "[SQL:inventario]",
+    "[SQL:reservas_capacidad]",
+    "[RAG:politica_despacho_extraordinario.md#Política de despacho extraordinario]",
+    "[RAG:politica_despacho_extraordinario.md#Definición]"
+  ],
+  "aprobacion": null,
+  "estado": "confirmado",
+  "mensaje": "Compromiso confirmado: 6 x EDGE-ORIN para C-1003 el 2026-03-19 con despacho normal. Entrega viable con capacidad y ventana estándar."
+}

@@ -1,0 +1,68 @@
+OPENAI_API_KEY is not set, skipping trace export
+{
+  "escenario": {
+    "caso_id": "LOG-001",
+    "variante": "Logística",
+    "semilla": 6739,
+    "fecha_referencia": "2026-03-16",
+    "capacidad_diaria": 6,
+    "ventana_entrega_dias": 3,
+    "costo_extraordinario_usd": 400
+  }
+}
+{
+  "caso_id": "LOG-001",
+  "semilla": 6739,
+  "id_solicitud": "demo-llm-gemini",
+  "solicitud_original": "Talleres Norte (C-1004) pide 12 EDGE-ORIN urgente para el 2026-03-17",
+  "solicitud": {
+    "cliente_id": "C-1004",
+    "sku": "EDGE-ORIN",
+    "cantidad": 12,
+    "fecha_entrega": "2026-03-17",
+    "almacen": "ALM-LIM"
+  },
+  "cliente": {
+    "cliente_id": "C-1004",
+    "nombre": "Talleres Norte",
+    "region": "La Libertad",
+    "estado": "activo"
+  },
+  "stock_disponible": 30,
+  "capacidad": {
+    "ok": true,
+    "almacen": "ALM-LIM",
+    "fecha": "2026-03-17",
+    "cantidad_solicitada": 12,
+    "capacidad_diaria": 6,
+    "capacidad_reservada": 0,
+    "capacidad_normal_disponible": 6,
+    "capacidad_extraordinaria_disponible": 12,
+    "suficiente_normal": false,
+    "suficiente_extraordinaria": true,
+    "source_ref": "[SQL:reservas_capacidad]"
+  },
+  "evaluacion": {
+    "decision": "requiere_aprobacion",
+    "tipo_despacho": "extraordinario",
+    "motivo": "Requiere despacho extraordinario y aprobación del supervisor de logística.",
+    "costo_extraordinario_usd": 400,
+    "fecha_minima_normal": "2026-03-19",
+    "capacidad_normal_disponible": 6,
+    "capacidad_extraordinaria_disponible": 12
+  },
+  "fuentes": [
+    "[SQL:clientes]",
+    "[SQL:inventario]",
+    "[SQL:reservas_capacidad]",
+    "[RAG:politica_despacho_extraordinario.md#Política de despacho extraordinario]",
+    "[RAG:politica_despacho_extraordinario.md#Definición]"
+  ],
+  "aprobacion": {
+    "requerida": true,
+    "rol": "supervisor_logistica",
+    "decision": null
+  },
+  "estado": "pendiente_aprobacion",
+  "mensaje": "Excepción pendiente de aprobación del supervisor de logística. Requiere despacho extraordinario y aprobación del supervisor de logística. Costo extraordinario: USD 400."
+}

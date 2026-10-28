@@ -197,3 +197,37 @@ Cobertura nueva del Hito 03:
 - El grafo expone al menos nueve nodos.
 
 La extracción con LLM desde lenguaje natural no se ejecutó porque `OPENAI_API_KEY` no está configurada; el extractor es inyectable y queda listo para cuando se configure la credencial.
+
+## Ejecución real con Gemini (posterior al Hito 03)
+
+Con `MODEL_PROVIDER=gemini`, `PROVIDER_API_KEY` y `MODEL_NAME=gemini-3.5-flash-lite` se repitieron las verificaciones contra el proveedor real:
+
+### Router por modelo e híbrido
+
+```bash
+uv run python -m agente_logistico.evaluacion_router --strategy model --delay 13
+uv run python -m agente_logistico.evaluacion_router --strategy hybrid --delay 13
+```
+
+Resultado: **12/12 (accuracy 1.0) en ambas estrategias**. El `--delay 13` respeta el límite del nivel gratuito (5 solicitudes/minuto). Evidencias: `evidencias/hito02_router_model_gemini.log` y `evidencias/hito02_router_hybrid_gemini.log`.
+
+### RAG real con embeddings de Gemini
+
+`gemini-embedding-001` (3072 dimensiones) recupera la política correcta con scores 0.74–0.84 y se abstiene ante texto irrelevante con `RAG_MIN_SCORE=0.65` (su similitud coseno base es ~0.57, mayor que el umbral por defecto 0.25; la calibración quedó registrada como decisión de ingeniería). Evidencia: `evidencias/hito02_rag_gemini.log`.
+
+### Workflow end-to-end en lenguaje natural
+
+```bash
+uv run python -m agente_logistico --id-hilo demo-llm-directo --solicitud "Andes Manufactura (C-1003) necesita 6 computadoras EDGE-ORIN para el 2026-03-19"
+uv run python -m agente_logistico --id-hilo demo-llm-gemini --solicitud "Talleres Norte (C-1004) pide 12 EDGE-ORIN urgente para el 2026-03-17"
+```
+
+- `demo-llm-directo` → `confirmado` (extracción LLM correcta, despacho normal). Evidencia: `evidencias/hito03_cli_llm_directo_gemini.log`.
+- `demo-llm-gemini` → `pendiente_aprobacion` con costo USD 400 (el LLM interpretó “urgente” y la fecha temprana activó la ruta extraordinaria). Evidencia: `evidencias/hito03_cli_llm_excepcion_gemini.log`.
+
+### Incidencias reales de la integración con Gemini
+
+1. `PROVIDER_BASE_URL` sin esquema `https://` producía `UnsupportedProtocol`; el código ahora lo tolera.
+2. `gemini-3.8-flash` (preview) respondió 503 por alta demanda.
+3. `gemini-3.6-flash` agotó su cuota diaria del nivel gratuito (20 solicitudes/día).
+4. `gemini-2.5-flash-lite`, el más barato del catálogo, ya no está disponible para claves nuevas (404); la API recomienda `gemini-3.5-flash-lite`.

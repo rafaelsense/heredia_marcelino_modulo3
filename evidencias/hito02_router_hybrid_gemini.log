@@ -1,0 +1,105 @@
+OPENAI_API_KEY is not set, skipping trace export
+{
+  "strategy": "hybrid",
+  "total": 12,
+  "correct": 12,
+  "accuracy": 1.0,
+  "results": [
+    {
+      "query": "¿Cuál es la política para comprometer una fecha de entrega?",
+      "expected": "rag",
+      "actual": "rag",
+      "correct": true,
+      "confidence": 0.95,
+      "reason": "Pregunta sobre política o procedimiento documental"
+    },
+    {
+      "query": "¿Qué diferencia hay entre despacho normal y extraordinario según la política?",
+      "expected": "rag",
+      "actual": "rag",
+      "correct": true,
+      "confidence": 0.95,
+      "reason": "Pregunta sobre política o procedimiento documental"
+    },
+    {
+      "query": "¿Quién aprueba un despacho extraordinario?",
+      "expected": "rag",
+      "actual": "rag",
+      "correct": true,
+      "confidence": 0.95,
+      "reason": "Pregunta sobre política o procedimiento documental"
+    },
+    {
+      "query": "¿Cuántas unidades de EDGE-ORIN vendimos a C-1003?",
+      "expected": "sql",
+      "actual": "sql",
+      "correct": true,
+      "confidence": 0.95,
+      "reason": "Consulta histórica o agregada sobre ventas"
+    },
+    {
+      "query": "¿Cuál fue el ingreso histórico de CAM-IP67 en el primer trimestre?",
+      "expected": "sql",
+      "actual": "sql",
+      "correct": true,
+      "confidence": 0.95,
+      "reason": "Consulta histórica o agregada sobre ventas"
+    },
+    {
+      "query": "Muéstrame las ventas históricas del cliente C-1004.",
+      "expected": "sql",
+      "actual": "sql",
+      "correct": true,
+      "confidence": 0.95,
+      "reason": "Consulta histórica o agregada sobre ventas"
+    },
+    {
+      "query": "¿Qué existencias hay de EDGE-ORIN en ALM-LIM?",
+      "expected": "tools",
+      "actual": "tools",
+      "correct": true,
+      "confidence": 0.92,
+      "reason": "Dato operacional actual acotado"
+    },
+    {
+      "query": "¿Qué capacidad de despacho queda para el 2026-03-18?",
+      "expected": "tools",
+      "actual": "tools",
+      "correct": true,
+      "confidence": 0.92,
+      "reason": "Dato operacional actual acotado"
+    },
+    {
+      "query": "Evalúa y confirma 6 EDGE-ORIN para C-1003 con entrega el 2026-03-19.",
+      "expected": "workflow",
+      "actual": "workflow",
+      "correct": true,
+      "confidence": 0.96,
+      "reason": "Solicitud de evaluación o confirmación de entrega con proceso de varios pasos"
+    },
+    {
+      "query": "Evaluar 12 EDGE-ORIN para C-1003 con entrega el siguiente día hábil.",
+      "expected": "workflow",
+      "actual": "workflow",
+      "correct": true,
+      "confidence": 0.96,
+      "reason": "Solicitud de evaluación o confirmación de entrega con proceso de varios pasos"
+    },
+    {
+      "query": "Necesito una entrega urgente de equipos.",
+      "expected": "clarify",
+      "actual": "clarify",
+      "correct": true,
+      "confidence": 0.95,
+      "reason": "La consulta es ambigua y carece de información esencial como el número de SKU, cantidad o datos del cliente para procesar una entrega urgente."
+    },
+    {
+      "query": "¿Qué significa SKU?",
+      "expected": "direct",
+      "actual": "direct",
+      "correct": true,
+      "confidence": 0.9,
+      "reason": "Pregunta conceptual sin datos internos"
+    }
+  ]
+}

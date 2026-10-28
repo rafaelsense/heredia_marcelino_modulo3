@@ -1,0 +1,11 @@
+modelo embeddings: gemini-embedding-001
+Q: ¿Cuál es la ventana de entrega estándar?
+   [RAG:politica_compromiso_entrega.md#Política de compromiso de entrega] | score: 0.7726
+   [RAG:politica_compromiso_entrega.md#Ventana estándar] | score: 0.7396
+Q: ¿Quién aprueba el despacho extraordinario?
+   [RAG:politica_despacho_extraordinario.md#Política de despacho extraordinario] | score: 0.8409
+   [RAG:politica_despacho_extraordinario.md#Definición] | score: 0.8016
+Q: órbitas planetarias y astronomía
+   (abstención: sin evidencia suficiente)
+Q: clima en montañas del sur
+   (abstención: sin evidencia suficiente)

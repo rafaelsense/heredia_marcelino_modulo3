@@ -10,7 +10,11 @@ BASE_URLS = {
 }
 MODELOS_POR_DEFECTO = {
     "openai": "gpt-4.1-mini",
-    "gemini": "gemini-3.8-flash",
+    # gemini-3.5-flash-lite: el más económico disponible para claves nuevas.
+    # gemini-2.5-flash-lite (más barato) ya no se ofrece a usuarios nuevos;
+    # gemini-3.6-flash agota su cuota diaria free tier (20 req/día);
+    # gemini-3.8-flash (preview) respondió 503 por alta demanda.
+    "gemini": "gemini-3.5-flash-lite",
 }
 EMBEDDINGS_POR_DEFECTO = {
     "openai": "text-embedding-3-small",
@@ -28,6 +32,8 @@ def resolver_proveedor() -> tuple[str, str | None, str]:
     if provider not in ("openai", "gemini", "openai_compatible"):
         raise ValueError(f"MODEL_PROVIDER no soportado: {provider}")
     base_url = os.getenv("PROVIDER_BASE_URL") or BASE_URLS.get(provider)
+    if base_url and not base_url.startswith(("http://", "https://")):
+        base_url = f"https://{base_url}"
     if provider == "openai_compatible" and not base_url:
         raise ValueError("PROVIDER_BASE_URL es obligatorio para openai_compatible")
     api_key = os.getenv("PROVIDER_API_KEY")

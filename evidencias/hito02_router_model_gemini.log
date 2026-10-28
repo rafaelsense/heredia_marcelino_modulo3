@@ -1,0 +1,127 @@
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+OPENAI_API_KEY is not set, skipping trace export
+{
+  "strategy": "model",
+  "total": 12,
+  "correct": 12,
+  "accuracy": 1.0,
+  "results": [
+    {
+      "query": "¿Cuál es la política para comprometer una fecha de entrega?",
+      "expected": "rag",
+      "actual": "rag",
+      "correct": true,
+      "confidence": 1.0,
+      "reason": "La consulta pregunta específicamente por la política para comprometer una fecha de entrega, lo cual corresponde a procedimientos y políticas internas."
+    },
+    {
+      "query": "¿Qué diferencia hay entre despacho normal y extraordinario según la política?",
+      "expected": "rag",
+      "actual": "rag",
+      "correct": true,
+      "confidence": 1.0,
+      "reason": "La consulta solicita información sobre las políticas de despacho normal y extraordinario."
+    },
+    {
+      "query": "¿Quién aprueba un despacho extraordinario?",
+      "expected": "rag",
+      "actual": "rag",
+      "correct": true,
+      "confidence": 1.0,
+      "reason": "La consulta pregunta por una política o procedimiento interno de aprobación de despachos extraordinarios."
+    },
+    {
+      "query": "¿Cuántas unidades de EDGE-ORIN vendimos a C-1003?",
+      "expected": "sql",
+      "actual": "sql",
+      "correct": true,
+      "confidence": 1.0,
+      "reason": "La consulta solicita un dato histórico de ventas agregado por producto y cliente."
+    },
+    {
+      "query": "¿Cuál fue el ingreso histórico de CAM-IP67 en el primer trimestre?",
+      "expected": "sql",
+      "actual": "sql",
+      "correct": true,
+      "confidence": 1.0,
+      "reason": "La consulta solicita información histórica y agregados financieros sobre un producto específico, lo cual corresponde a la ruta sql."
+    },
+    {
+      "query": "Muéstrame las ventas históricas del cliente C-1004.",
+      "expected": "sql",
+      "actual": "sql",
+      "correct": true,
+      "confidence": 1.0,
+      "reason": "La consulta solicita ventas históricas de un cliente específico, lo cual requiere consultar agregados o historial en la base de datos."
+    },
+    {
+      "query": "¿Qué existencias hay de EDGE-ORIN en ALM-LIM?",
+      "expected": "tools",
+      "actual": "tools",
+      "correct": true,
+      "confidence": 1.0,
+      "reason": "La consulta solicita la capacidad o stock actual de un SKU específico (EDGE-ORIN) en un almacén determinado (ALM-LIM), lo cual corresponde a la ruta de herramientas de inventario."
+    },
+    {
+      "query": "¿Qué capacidad de despacho queda para el 2026-03-18?",
+      "expected": "tools",
+      "actual": "tools",
+      "correct": true,
+      "confidence": 1.0,
+      "reason": "La consulta solicita explícitamente la capacidad actual de despacho para una fecha específica, lo cual corresponde al dominio de herramientas (tools)."
+    },
+    {
+      "query": "Evalúa y confirma 6 EDGE-ORIN para C-1003 con entrega el 2026-03-19.",
+      "expected": "workflow",
+      "actual": "workflow",
+      "correct": true,
+      "confidence": 1.0,
+      "reason": "La consulta solicita explícitamente evaluar y confirmar un compromiso de entrega para productos y cliente específicos."
+    },
+    {
+      "query": "Evaluar 12 EDGE-ORIN para C-1003 con entrega el siguiente día hábil.",
+      "expected": "workflow",
+      "actual": "workflow",
+      "correct": true,
+      "confidence": 1.0,
+      "reason": "La consulta solicita evaluar y confirmar un compromiso de entrega para un SKU, cliente y plazo específicos."
+    },
+    {
+      "query": "Necesito una entrega urgente de equipos.",
+      "expected": "clarify",
+      "actual": "clarify",
+      "correct": true,
+      "confidence": 0.95,
+      "reason": "La consulta del usuario es ambigua y carece de información esencial como el número de SKU, cantidad o fecha requerida para procesar la entrega urgente."
+    },
+    {
+      "query": "¿Qué significa SKU?",
+      "expected": "direct",
+      "actual": "direct",
+      "correct": true,
+      "confidence": 1.0,
+      "reason": "La consulta pregunta por el concepto general o definición de un término logístico básico."
+    }
+  ]
+}

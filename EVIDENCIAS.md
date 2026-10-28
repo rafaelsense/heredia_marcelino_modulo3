@@ -249,3 +249,48 @@ uv run python -m agente_logistico --id-hilo demo-llm-gemini --solicitud "Tallere
 2. `gemini-3.8-flash` (preview) respondió 503 por alta demanda.
 3. `gemini-3.6-flash` agotó su cuota diaria del nivel gratuito (20 solicitudes/día).
 4. `gemini-2.5-flash-lite`, el más barato del catálogo, ya no está disponible para claves nuevas (404); la API recomienda `gemini-3.5-flash-lite`.
+
+## Hito 04
+
+### Retry ante fallo transitorio
+
+```bash
+SIMULAR_FALLO_TRANSITORIO_CAPACIDAD=1 uv run python -m agente_logistico \
+  --cliente C-1003 --sku EDGE-ORIN --cantidad 6 --fecha 2026-03-19 \
+  --id-hilo demo-retry --offline
+```
+
+La simulación falla la primera consulta de capacidad del hilo; el retry con backoff la recupera y el compromiso termina `confirmado`. El log muestra:
+
+```text
+[retry] capacidad de despacho: intento 1/3 falló (ErrorTransitorioSimulado); reintento en 1.0s
+"estado": "confirmado"
+```
+
+Evidencia: `evidencias/hito04_retry_simulado.log`. Los errores 429/503 reales observados con Gemini quedaron registrados en `evidencias/hito02_router_model_gemini.log` (primer intento) y motivaron esta política de retry.
+
+### HITL con checkpoint SQLite
+
+```bash
+# 1) La excepción se pausa en interrupt() y persiste en data/checkpoints.db
+uv run python -m agente_logistico --cliente C-1004 --sku EDGE-ORIN \
+  --cantidad 12 --fecha 2026-03-17 --id-hilo demo-hitl-aprobado --offline
+
+# 2) Otro proceso reanuda el hilo con la decisión humana
+uv run python -m agente_logistico --reanudar --id-hilo demo-hitl-aprobado \
+  --decision aprobado --supervisor "María Torres" --comentario "Cliente prioritario" --offline
+```
+
+- Pausa: estado `pendiente_aprobacion` con el motivo, el costo USD 400 y la instrucción de reanudación. Evidencia: `evidencias/hito04_hitl_pausa.log`.
+- Aprobación: `confirmado` con despacho extraordinario, “Aprobado por María Torres”. Evidencia: `evidencias/hito04_hitl_aprobado.log`.
+- Rechazo humano (hilo `demo-hitl-rechazado`): `rechazado` con “El supervisor María Torres no aprobó el despacho extraordinario. Costo no justificado”. Evidencia: `evidencias/hito04_hitl_rechazado.log`.
+
+### Pruebas completas
+
+```bash
+uv run pytest
+```
+
+Resultado: **79 passed**. Salida: `evidencias/hito04_pytest.log`.
+
+Cobertura nueva: retry con éxito tras fallo, agotamiento de intentos, no reintento de errores de negocio, retry asíncrono, simulación una sola vez por clave, pausa HITL persistida en checkpoint, reanudación aprobada y rechazada, validación de la decisión y ruta directa sobreviviendo un fallo transitorio.

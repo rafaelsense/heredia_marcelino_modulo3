@@ -76,7 +76,11 @@ def test_excepcion_queda_pendiente_de_aprobacion(bd_temporal, tmp_path):
         "requerida": True,
         "rol": "supervisor_logistica",
         "decision": None,
+        "supervisor": None,
+        "comentario": None,
     }
+    # La pausa HITL queda marcada hasta que el supervisor decida (Hito 04)
+    assert "__interrupt__" in estado
 
 
 def test_rechazo_por_stock_insuficiente(bd_temporal, tmp_path):
@@ -162,10 +166,10 @@ def test_el_estado_no_guarda_datos_innecesarios(bd_temporal, tmp_path):
     assert "sk-" not in contenido
 
 
-def test_el_grafo_expone_los_nueve_nodos(bd_temporal):
+def test_el_grafo_expone_al_menos_diez_nodos(bd_temporal):
     grafo = build_workflow()
 
-    assert len(grafo.get_graph().nodes) >= 9
+    assert len(grafo.get_graph().nodes) >= 10
 
 
 def test_solicitud_logistica_valida_campos():

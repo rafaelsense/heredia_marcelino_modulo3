@@ -73,3 +73,21 @@ Registro elaborado durante el desarrollo. Se ampliará en los hitos de workflow,
 - **Trade-off:** un modelo lite tiene menor capacidad de razonamiento; se mitiga manteniendo las decisiones de negocio en reglas deterministas y usando el LLM solo para clasificar y extraer.
 - **Riesgo:** los límites del nivel gratuito (5 solicitudes/minuto) obligan a espaciar las evaluaciones (`--delay`); un cambio de modelo exige recalibrar el umbral RAG (`RAG_MIN_SCORE`).
 - **En producción:** habilitar facturación, monitorear cuotas por modelo y fijar `MODEL_NAME` explícitamente en cada entorno.
+
+## 9. Retry solo para errores transitorios
+
+- **Problema:** las llamadas externas fallan por causas temporales (429 cuota/minuto, 503 alta demanda, red) observadas en la integración real con Gemini.
+- **Alternativas:** reintentar todo, no reintentar nada o reintentar solo errores transitorios.
+- **Decisión:** `reintento.py` con backoff exponencial + jitter, aplicado a extracción LLM, capacidad y RAG; los errores de negocio (stock insuficiente, cliente bloqueado) los rechazan las reglas sin retry.
+- **Trade-off:** latencia adicional acotada (3 intentos, 1s→2s→4s) frente a fallos evitables.
+- **Riesgo:** enmascarar errores persistentes; se mitiga propagando la excepción tras agotar intentos y registrando cada reintento en el log.
+- **En producción:** respetar `Retry-After` del proveedor, circuit breaker y métricas de reintentos por causa.
+
+## 10. HITL con interrupt() y checkpoint SQLite
+
+- **Problema:** la excepción de despacho extraordinario exige aprobación humana sin perder el estado del proceso.
+- **Alternativas:** marcar pendiente en una tabla propia, pausar en memoria o `interrupt()` de LangGraph con checkpointer.
+- **Decisión:** dos nodos (`marcar_excepcion` publica el estado pendiente; `esperar_aprobacion` pausa con `interrupt()`) y `AsyncSqliteSaver` en `data/checkpoints.db`; la reanudación con `Command(resume=...)` registra supervisor, decisión y comentario.
+- **Trade-off:** requiere persistencia y un hilo (`--id-hilo`), pero la pausa sobrevive al proceso — la evidencia reanuda desde otro proceso.
+- **Riesgo:** reanudar un hilo inexistente o con decisión inválida; se valida `aprobado|rechazado` antes de invocar el grafo.
+- **En producción:** checkpointer compartido (PostgreSQL), autenticación del aprobador, plazo de expiración de la excepción y notificaciones.

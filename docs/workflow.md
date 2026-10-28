@@ -18,6 +18,9 @@ flowchart TD
     D --> E[evaluar_reglas]
     E -->|directo| F[confirmar_compromiso]
     E -->|requiere_aprobacion| G[marcar_excepcion]
+    G --> H[esperar_aprobacion]
+    H -->|interrupt: supervisor aprueba| F
+    H -->|interrupt: supervisor rechaza| R
     E -->|rechazado| R
     IA --> FIN([END])
     F --> FIN
@@ -34,10 +37,25 @@ flowchart TD
 | `consultar_capacidad` | Capacidad normal/extraordinaria de la fecha pedida | `[SQL:reservas_capacidad]` |
 | `recuperar_politica` | Adjunta políticas citables; sin API degrada con advertencia y las reglas deciden | `[RAG:...]` |
 | `evaluar_reglas` | Aplica `evaluar_compromiso` con los datos recopilados | — |
-| `confirmar_compromiso` | Cierra la ruta directa con confirmación trazable | — |
-| `marcar_excepcion` | Deja la excepción `pendiente_aprobacion` (HITL en Hito 04) | — |
-| `cerrar_rechazo` | Cierra con el motivo de negocio, sin retry | — |
+| `confirmar_compromiso` | Confirma despacho normal o extraordinario aprobado | — |
+| `marcar_excepcion` | Publica la excepción como `pendiente_aprobacion` | — |
+| `esperar_aprobacion` | Pausa con `interrupt()` hasta la decisión del supervisor (requiere checkpoint) | — |
+| `cerrar_rechazo` | Cierra con el motivo de negocio o la decisión del supervisor, sin retry | — |
 | `cerrar_aclaracion` | Pide los datos faltantes sin ejecutar tools | — |
+
+## Robustez (Hito 04)
+
+- **Retry con backoff exponencial y jitter** (`reintento.py`): solo errores
+  transitorios (429 cuota/minuto, 503 alta demanda, red) en extracción LLM,
+  capacidad y RAG. Los errores de negocio nunca se reintentan.
+- **Checkpoint SQLite** (`data/checkpoints.db`): el `--id-hilo` persiste el
+  estado del grafo; una excepción sobrevive al proceso que la creó.
+- **HITL**: `esperar_aprobacion` pausa con `interrupt()`; se reanuda con:
+
+```bash
+uv run python -m agente_logistico --reanudar --id-hilo <ID> \
+  --decision aprobado --supervisor "María Torres" --offline
+```
 
 ## Campos del estado (`EstadoLogistico`)
 
@@ -52,7 +70,7 @@ flowchart TD
 | `capacidad` | Resultado de capacidad de despacho | Sustento de la decisión |
 | `evaluacion` | Resultado serializado de las reglas | Decisión trazable |
 | `fuentes` | Lista acumulativa de `source_ref` | Citas verificables (reductor aditivo) |
-| `aprobacion` | Marcador HITL (`requerida`, `rol`, `decision`) | Lo completa el Hito 04 |
+| `aprobacion` | Decisión HITL (`requerida`, `rol`, `decision`, `supervisor`, `comentario`) | La completa el interrupt del Hito 04 |
 | `estado` | `procesando`/`aclaracion`/`confirmado`/`pendiente_aprobacion`/`rechazado` | Resultado del proceso |
 | `mensaje` | Texto final para el usuario | Salida legible |
 
@@ -67,9 +85,9 @@ documentos crudos: solo lo necesario para decidir y auditar.
    explícitas y dibujables.
 2. **Estado auditable**: cada nodo agrega hechos y fuentes a un estado tipado;
    al final se puede responder *por qué* se decidió, no solo *qué* se decidió.
-3. **Puntos de extensión del curso**: retry, checkpoint e `interrupt()` HITL
-   (Hito 04) y exposición como servidor MCP (Hito 05) se enchufan al grafo sin
-   reescribir la lógica.
+3. **Robustez incorporada**: retry con backoff, checkpoint persistente e
+   `interrupt()` HITL (Hito 04) se enchufaron al grafo sin reescribir la
+   lógica de negocio.
 4. **Dependencias inyectables**: extractor LLM, embedder y base de datos se
    inyectan en `build_workflow`, así los tests corren offline y deterministas.
 

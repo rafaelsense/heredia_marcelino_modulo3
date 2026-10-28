@@ -120,7 +120,39 @@ El nodo `recuperar_politica` degrada con advertencia en lugar de abortar cuando 
 
 ## Hito 04 — Retry, checkpoint y HITL
 
-**Estado:** pendiente.
+**Estado:** completado y pendiente de revisión del estudiante.
+
+### Qué se construyó
+
+- `reintento.py`: retry con backoff exponencial y jitter, solo para errores transitorios (429 cuota/minuto, 503 alta demanda, fallos de red), en versión síncrona y asíncrona.
+- Simulación determinista de fallo transitorio (`SIMULAR_FALLO_TRANSITORIO_CAPACIDAD=1`) que falla una sola vez por hilo, para evidenciar el retry sin gastar cuota de API.
+- Retry aplicado en tres nodos: extracción LLM, capacidad de despacho y recuperación de políticas.
+- Checkpoint persistente con `AsyncSqliteSaver` en `data/checkpoints.db`; `--id-hilo` es el hilo del grafo.
+- HITL real: nuevo nodo `esperar_aprobacion` pausa el grafo con `interrupt()`; el supervisor reanuda con `--reanudar --decision aprobado|rechazado --supervisor "Nombre"`.
+- El grafo pasa a 10 nodos y 4 aristas condicionales (la cuarta enruta la decisión humana).
+- Diez pruebas nuevas; la suite completa llega a 79.
+
+### Qué falló
+
+La integración real con Gemini había mostrado 429 (cuota por minuto) y 503 (alta demanda): exactamente los errores que este hito trata como transitorios. Además, el primer diseño ponía el `interrupt()` en el mismo nodo que marcaba la excepción, y el estado pausado no reflejaba `pendiente_aprobacion`; se separó en `marcar_excepcion` (publica el estado) y `esperar_aprobacion` (pausa).
+
+### Qué aprendí
+
+`interrupt()` exige checkpointer: sin persistencia no hay pausa real, solo una detención. También que el retry debe distinguir errores transitorios de errores de negocio: reintentar un "stock insuficiente" sería un error de diseño, no de red.
+
+### Qué decisión cambió después de probar
+
+El rechazo por decisión del supervisor necesita su propio mensaje: `cerrar_rechazo` ahora distingue el rechazo de reglas (motivo de negocio) del rechazo humano (supervisor y comentario).
+
+### Evidencia
+
+- `evidencias/hito04_retry_simulado.log` (fallo transitorio → retry → `confirmado`)
+- `evidencias/hito04_hitl_pausa.log` (excepción pausada con instrucción de reanudación)
+- `evidencias/hito04_hitl_aprobado.log` (reanudación aprobada → despacho extraordinario confirmado, USD 400)
+- `evidencias/hito04_hitl_rechazado.log` (reanudación rechazada → cierre con motivo del supervisor)
+- `evidencias/hito04_pytest.log` (79 passed)
+
+La pausa HITL se demostró entre procesos distintos: la reanudación lee el checkpoint SQLite sin repetir los nodos anteriores.
 
 ## Hito 05 — MCP: desacoplar
 

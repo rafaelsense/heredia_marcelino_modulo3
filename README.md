@@ -6,7 +6,7 @@ Proyecto del Módulo 3 para evaluar compromisos de entrega B2B de AndesSupply.
 - **Variante:** Logística
 - **Caso:** `LOG-001`
 - **Semilla:** `6739`
-- **Estado actual:** Hito 03, Workflow con estado
+- **Estado actual:** Hito 04, Retry + checkpoint + HITL
 
 La semilla determina la capacidad diaria, la ventana estándar de entrega y el costo del despacho extraordinario. Los datos son sintéticos y la fecha de referencia es fija para que las ejecuciones sean reproducibles.
 
@@ -31,7 +31,7 @@ uv run pytest
 uv run python -m agente_logistico.evaluacion_router --strategy deterministic
 ```
 
-Resultados actuales: 66 pruebas verdes y 12/12 casos del router determinista.
+Resultados actuales: 79 pruebas verdes y 12/12 casos del router en las tres estrategias (determinista, modelo e híbrido, estas dos con Gemini real).
 
 `inicializar_datos` recrea únicamente la base sintética `data/logistica.db`. Esta base, `.env` y los entornos locales están excluidos de Git.
 
@@ -47,7 +47,12 @@ uv run python -m agente_logistico --id-hilo demo-llm \
   --solicitud "Andes Manufactura (C-1003) necesita 6 EDGE-ORIN para el 2026-03-19"
 ```
 
-El grafo, sus nodos y la justificación del estado se describen en `docs/workflow.md`.
+El grafo, sus nodos y la justificación del estado se describen en `docs/workflow.md`. Las ejecuciones usan checkpoint SQLite (`data/checkpoints.db`): si una excepción queda `pendiente_aprobacion`, el supervisor la reanuda desde otro proceso:
+
+```bash
+uv run python -m agente_logistico --reanudar --id-hilo <ID> \
+  --decision aprobado --supervisor "María Torres" --offline
+```
 
 ## Credenciales opcionales
 
@@ -89,8 +94,9 @@ src/agente_logistico/
   evaluacion_router.py # Benchmark de 12 casos
   calibracion_rag.py   # Calibración medible del umbral de abstención RAG
   estado_workflow.py   # Solicitud y estado tipado del grafo
-  workflow.py          # Grafo LangGraph del compromiso de entrega
-  cli.py               # CLI del workflow (estructurado o lenguaje natural)
+  workflow.py          # Grafo LangGraph con retry, checkpoint e HITL
+  reintento.py         # Retry con backoff para errores transitorios
+  cli.py               # CLI del workflow (estructurado, natural o reanudación)
 docs/
   politica_compromiso_entrega.md
   politica_despacho_extraordinario.md

@@ -1,0 +1,100 @@
+[10/28/26 15:04:29] INFO     Processing request of type           server.py:733
+                             ListToolsRequest                                  
+                    INFO     Processing request of type           server.py:733
+                             CallToolRequest                                   
+                    INFO     Processing request of type           server.py:733
+                             CallToolRequest                                   
+                    INFO     Processing request of type           server.py:733
+                             CallToolRequest                                   
+                    INFO     Processing request of type           server.py:733
+                             CallToolRequest                                   
+                    INFO     Processing request of type           server.py:733
+                             ListResourcesRequest                              
+                    INFO     Processing request of type           server.py:733
+                             ReadResourceRequest                               
+                    INFO     Processing request of type           server.py:733
+                             ListPromptsRequest                                
+                    INFO     Processing request of type           server.py:733
+                             GetPromptRequest                                  
+=== CONEXIÓN MCP ===
+servidor: Logística LOG-001
+
+=== HERRAMIENTAS ===
+- consultar_cliente: Obtiene el estado logístico de un cliente sin modificar la base.
+- consultar_disponibilidad: Compara el stock actual con una cantidad solicitada.
+- consultar_capacidad_despacho: Calcula capacidad normal y extraordinaria disponible para una fecha.
+- resumen_ventas: Resume ventas históricas con filtros fijos y valores parametrizados.
+
+=== LLAMADA consultar_cliente ===
+{
+  "ok": true,
+  "cliente": {
+    "cliente_id": "C-1003",
+    "nombre": "Andes Manufactura",
+    "region": "Lima",
+    "estado": "activo"
+  },
+  "source_ref": "[SQL:clientes]"
+}
+
+=== LLAMADA consultar_disponibilidad ===
+{
+  "ok": true,
+  "sku": "EDGE-ORIN",
+  "almacen": "ALM-LIM",
+  "cantidad_solicitada": 40,
+  "stock_disponible": 30,
+  "suficiente": false,
+  "source_ref": "[SQL:inventario]"
+}
+
+=== LLAMADA consultar_capacidad_despacho ===
+{
+  "ok": true,
+  "almacen": "ALM-LIM",
+  "fecha": "2026-03-17",
+  "cantidad_solicitada": 12,
+  "capacidad_diaria": 6,
+  "capacidad_reservada": 0,
+  "capacidad_normal_disponible": 6,
+  "capacidad_extraordinaria_disponible": 12,
+  "suficiente_normal": false,
+  "suficiente_extraordinaria": true,
+  "source_ref": "[SQL:reservas_capacidad]"
+}
+
+=== LLAMADA resumen_ventas ===
+{
+  "ok": true,
+  "filters": {
+    "sku": "EDGE-ORIN",
+    "cliente_id": "C-1003",
+    "fecha_desde": null,
+    "fecha_hasta": null
+  },
+  "transacciones": 2,
+  "unidades": 12,
+  "ingresos_usd": 22800.0,
+  "source_ref": "[SQL:ventas]"
+}
+
+=== RECURSOS ===
+- politica://compromiso-entrega
+- politica://despacho-extraordinario
+
+=== RECURSO politica://compromiso-entrega (extracto) ===
+# Política de compromiso de entrega
+
+## Alcance
+
+Esta política se aplica a compromisos de entrega B2B gestionados desde el almacén `ALM-LIM`. La fecha operativa de referencia del escenario `LOG-001` es `2026-03-16`.
+
+## Ventana estándar
+
+La ventana estándar se calcula en días hábiles de lunes a viernes. Para la semilla `6739`, la ventana vigente es de 3 días hábiles y la capacidad normal es de 6 u
+
+=== PROMPTS ===
+- evaluar_compromiso
+
+=== PROMPT evaluar_compromiso ===
+Evalúa esta solicitud de compromiso de entrega LOG-001. Cliente=C-1004, SKU=EDGE-ORIN, cantidad=12, fecha=2026-03-17. Verifica cliente, stock y capacidad con las herramientas disponibles. No inventes datos, no confirmes compromisos y separa hechos de advertencias.

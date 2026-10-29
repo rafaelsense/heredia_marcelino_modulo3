@@ -156,7 +156,33 @@ La pausa HITL se demostró entre procesos distintos: la reanudación lee el chec
 
 ## Hito 05 — MCP: desacoplar
 
-**Estado:** pendiente.
+**Estado:** completado y pendiente de revisión del estudiante.
+
+### Qué se construyó
+
+- `servidor_mcp.py`: servidor MCP stdio que expone las cuatro capacidades (cliente, disponibilidad, capacidad, ventas) delegando en la misma capa `servicios.py`, más dos recursos de políticas (`politica://compromiso-entrega`, `politica://despacho-extraordinario`) y un prompt reutilizable `evaluar_compromiso`.
+- `cliente_mcp.py`: cliente de demostración que conecta por stdio, lista herramientas/recursos/prompts y ejercita cada capacidad.
+- Integración opcional en el orquestador: `answer(..., usar_mcp=True)` conecta las rutas SQL y TOOLS al servidor MCP vía `MCPServerStdio` del Agents SDK.
+- Cinco pruebas nuevas que levantan el servidor como proceso separado; la suite llega a 84.
+
+### Qué falló
+
+- `mcp>=2` (la API de las sesiones, `MCPServer` de clase) es incompatible con el pin `openai-agents==0.0.17`, que exige `mcp<2`; se usó FastMCP de `mcp 1.30.0` con la misma estructura pedagógica.
+- La vía agente→MCP con Gemini 3.x falla en el segundo turno de tools: Gemini exige `thought_signature` en las llamadas a función y el SDK 0.0.17 no lo preserva al reconstruir el historial. Se verificó con llamadas HTTP directas que devolviendo la respuesta cruda (con firma) el segundo turno sí funciona (HTTP 200), y que `reasoning_effort: none` no está soportado (HTTP 400). La limitación quedó documentada en el docstring del orquestador; la capacidad MCP se verifica de forma independiente con el cliente puro.
+
+### Qué aprendí
+
+Desacoplar por MCP no cambia la lógica: las tools del servidor delegan en la misma capa de servicios, y los errores homogéneos (`ok`, `error_type`, `recoverable`) viajan intactos por stdio. También que “compatible con OpenAI” no garantiza compatibilidad total: los modelos con razonamiento añaden requisitos (thought signatures) que los clientes genéricos deben preservar.
+
+### Qué decisión cambió después de probar
+
+El agente sobre MCP queda como vía opcional (`usar_mcp`) en vez de obligatoria: con el proveedor actual la verificación completa del servidor se hace con el cliente MCP puro, y la vía agente→MCP se reserva para el proveedor OpenAI o un SDK que preserve `thought_signature`.
+
+### Evidencia
+
+- `evidencias/hito05_cliente_mcp.log` (tools, recursos y prompts por stdio)
+- `evidencias/hito05_agente_mcp.log` (hallazgo real: error 400 de thought_signature)
+- `evidencias/hito05_pytest.log` (84 passed)
 
 ## Hito 06 — Integración y reflexión
 

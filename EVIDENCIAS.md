@@ -294,3 +294,34 @@ uv run pytest
 Resultado: **79 passed**. Salida: `evidencias/hito04_pytest.log`.
 
 Cobertura nueva: retry con éxito tras fallo, agotamiento de intentos, no reintento de errores de negocio, retry asíncrono, simulación una sola vez por clave, pausa HITL persistida en checkpoint, reanudación aprobada y rechazada, validación de la decisión y ruta directa sobreviviendo un fallo transitorio.
+
+## Hito 05
+
+### Servidor MCP desacoplado
+
+```bash
+uv run python -m agente_logistico.cliente_mcp
+```
+
+El cliente levanta `servidor_mcp.py` como proceso separado (stdio) y ejercita las cuatro tools, los dos recursos de políticas y el prompt `evaluar_compromiso`. Evidencia: `evidencias/hito05_cliente_mcp.log`.
+
+Resultados principales:
+
+- 4 tools listadas: `consultar_cliente`, `consultar_disponibilidad`, `consultar_capacidad_despacho`, `resumen_ventas`.
+- `consultar_disponibilidad(EDGE-ORIN, 40)` por MCP devuelve `suficiente: false` con `[SQL:inventario]`.
+- Recursos `politica://compromiso-entrega` y `politica://despacho-extraordinario` legibles.
+- Prompt `evaluar_compromiso` renderizado con cliente, SKU, cantidad y fecha.
+
+### Hallazgo real: thought_signature de Gemini 3.x
+
+La vía agente→MCP (`answer(..., usar_mcp=True)`) falla en el segundo turno con `400 Function call is missing a thought_signature`. Diagnóstico con llamadas HTTP directas: la respuesta de Gemini sí incluye la firma, pero el SDK `openai-agents==0.0.17` no la preserva al reconstruir el historial; pasando la respuesta cruda el segundo turno responde 200. Evidencia: `evidencias/hito05_agente_mcp.log`. La capacidad MCP se verifica con el cliente puro; la vía agente→MCP queda disponible para el proveedor OpenAI.
+
+### Pruebas completas
+
+```bash
+uv run pytest
+```
+
+Resultado: **84 passed**. Salida: `evidencias/hito05_pytest.log`.
+
+Cobertura nueva: servidor MCP como proceso separado, listado de tools/recursos/prompts, tool de stock insuficiente por MCP, inyección SQL tratada como parámetro por MCP, lectura de política como recurso y prompt renderizado con argumentos.

@@ -1,13 +1,19 @@
 """Orquestador inicial que restringe las capacidades según la ruta elegida."""
 
+import sys
 import uuid
+from pathlib import Path
 
 from agents import Agent, Runner
+from agents.mcp import MCPServerStdio, MCPServerStdioParams
 
 from .contratos import AppContext, FinalAnswer, Route, RouteDecision
 from .modelo import build_model
 from .router import DeterministicRouter, HybridRouter, ModelRouter
 from .tools import TOOLS_RAG, TOOLS_SEMANTICAS, TOOLS_SQL
+
+RUTA_SERVIDOR_MCP = Path(__file__).resolve().parent / "servidor_mcp.py"
+RUTAS_CON_MCP = (Route.SQL, Route.TOOLS)
 
 
 def _tools_for(route: Route) -> list:
@@ -48,8 +54,20 @@ async def choose_route(query: str, strategy: str = "deterministic") -> RouteDeci
     raise ValueError(f"Estrategia de router no soportada: {strategy}")
 
 
-async def answer(query: str, strategy: str = "deterministic") -> tuple[RouteDecision, FinalAnswer]:
-    """Ejecuta la ruta elegida sin exponer herramientas fuera de su alcance."""
+async def answer(
+    query: str, strategy: str = "deterministic", usar_mcp: bool = False
+) -> tuple[RouteDecision, FinalAnswer]:
+    """Ejecuta la ruta elegida sin exponer herramientas fuera de su alcance.
+
+    Con `usar_mcp=True`, las rutas SQL y TOOLS consumen las capacidades desde
+    el servidor MCP (proceso separado) en lugar de las tools locales; la ruta
+    RAG sigue local porque el servidor expone las políticas como recursos.
+
+    Limitación conocida: con Gemini 3.x la continuación multi-turno de tools
+    exige `thought_signature`, que el pin `openai-agents==0.0.17` no preserva;
+    con el proveedor OpenAI esta vía funciona completa. La capacidad MCP se
+    verifica de forma independiente en `cliente_mcp.py` y `tests/test_mcp.py`.
+    """
     decision = await choose_route(query, strategy)
     if decision.route == Route.CLARIFY:
         return decision, FinalAnswer(
@@ -64,6 +82,23 @@ async def answer(query: str, strategy: str = "deterministic") -> tuple[RouteDeci
                 "(--cliente --sku --cantidad --fecha, o --solicitud con API)."
             ],
         )
+
+    if usar_mcp and decision.route in RUTAS_CON_MCP:
+        params = MCPServerStdioParams(
+            command=sys.executable, args=[str(RUTA_SERVIDOR_MCP)]
+        )
+        async with MCPServerStdio(params, name="logistica-log001") as servidor:
+            agent = Agent[AppContext](
+                name="Agente Logístico LOG-001",
+                model=build_model(),
+                instructions=_instructions_for(decision.route),
+                mcp_servers=[servidor],
+                output_type=FinalAnswer,
+            )
+            resultado = await Runner.run(
+                agent, query, context=AppContext(request_id=str(uuid.uuid4()))
+            )
+        return decision, resultado.final_output
 
     agent = Agent[AppContext](
         name="Agente Logístico LOG-001",

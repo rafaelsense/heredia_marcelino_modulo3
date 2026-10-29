@@ -6,7 +6,7 @@ Proyecto del Módulo 3 para evaluar compromisos de entrega B2B de AndesSupply.
 - **Variante:** Logística
 - **Caso:** `LOG-001`
 - **Semilla:** `6739`
-- **Estado actual:** Hito 04, Retry + checkpoint + HITL
+- **Estado actual:** Hito 05, MCP: desacoplar
 
 La semilla determina la capacidad diaria, la ventana estándar de entrega y el costo del despacho extraordinario. Los datos son sintéticos y la fecha de referencia es fija para que las ejecuciones sean reproducibles.
 
@@ -31,7 +31,16 @@ uv run pytest
 uv run python -m agente_logistico.evaluacion_router --strategy deterministic
 ```
 
-Resultados actuales: 79 pruebas verdes y 12/12 casos del router en las tres estrategias (determinista, modelo e híbrido, estas dos con Gemini real).
+Resultados actuales: 84 pruebas verdes y 12/12 casos del router en las tres estrategias (determinista, modelo e híbrido, estas dos con Gemini real).
+
+## Servidor MCP
+
+```bash
+# Cliente demo: levanta el servidor por stdio y ejercita tools, recursos y prompts
+uv run python -m agente_logistico.cliente_mcp
+```
+
+El servidor (`servidor_mcp.py`) expone las cuatro capacidades de `servicios.py`, las dos políticas como recursos `politica://...` y el prompt `evaluar_compromiso`. El orquestador puede consumirlo con `answer(..., usar_mcp=True)` (con Gemini 3.x esta vía tiene la limitación documentada de `thought_signature`; con OpenAI funciona completa).
 
 `inicializar_datos` recrea únicamente la base sintética `data/logistica.db`. Esta base, `.env` y los entornos locales están excluidos de Git.
 
@@ -97,6 +106,8 @@ src/agente_logistico/
   workflow.py          # Grafo LangGraph con retry, checkpoint e HITL
   reintento.py         # Retry con backoff para errores transitorios
   cli.py               # CLI del workflow (estructurado, natural o reanudación)
+  servidor_mcp.py      # Servidor MCP stdio sobre la capa de servicios
+  cliente_mcp.py       # Cliente MCP de demostración
 docs/
   politica_compromiso_entrega.md
   politica_despacho_extraordinario.md
@@ -108,4 +119,4 @@ tests/                 # Pruebas del escenario, RAG, SQL, tools, router y workfl
 evidencias/            # Salidas reales de verificación
 ```
 
-La ruta `WORKFLOW` ya ejecuta el grafo con estado; retry, checkpoint e HITL llegan en el Hito 04 y MCP en el Hito 05.
+La ruta `WORKFLOW` ya ejecuta el grafo con estado; retry, checkpoint e HITL están integrados (Hito 04) y las capacidades se exponen por MCP (Hito 05).

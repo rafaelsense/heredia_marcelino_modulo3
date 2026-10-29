@@ -91,3 +91,12 @@ Registro elaborado durante el desarrollo. Se ampliará en los hitos de workflow,
 - **Trade-off:** requiere persistencia y un hilo (`--id-hilo`), pero la pausa sobrevive al proceso — la evidencia reanuda desde otro proceso.
 - **Riesgo:** reanudar un hilo inexistente o con decisión inválida; se valida `aprobado|rechazado` antes de invocar el grafo.
 - **En producción:** checkpointer compartido (PostgreSQL), autenticación del aprobador, plazo de expiración de la excepción y notificaciones.
+
+## 11. MCP sobre la misma capa de servicios
+
+- **Problema:** desacoplar las capacidades del agente sin duplicar lógica entre agente, workflow y servidor MCP.
+- **Alternativas:** reimplementar las tools en el servidor, exponer SQL libre por MCP o delegar en `servicios.py`.
+- **Decisión:** el servidor FastMCP expone las cuatro capacidades delegando en la capa única, más políticas como recursos y un prompt reutilizable; la vía agente→MCP es opcional (`usar_mcp`).
+- **Trade-off:** `openai-agents==0.0.17` exige `mcp<2`, así que se usa la API FastMCP de `mcp 1.30.0`.
+- **Riesgo:** con Gemini 3.x la vía agente→MCP falla por `thought_signature` no preservada por el SDK; se documentó con evidencia y la verificación completa se hace con el cliente MCP puro.
+- **En producción:** actualizar el SDK a una versión que preserve `thought_signature` (o usar el proveedor OpenAI), servidor MCP como servicio independiente con autenticación y límites por cliente.

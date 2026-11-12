@@ -197,7 +197,7 @@ El agente sobre MCP queda como vía opcional (`usar_mcp`) en vez de obligatoria:
 
 ### Qué falló
 
-Nada falló funcionalmente en este hito.  La reanudación HITL del caso end-to-end terminó en ~2 segundos sin repetir los nodos LLM anteriores, lo que confirma que el checkpoint funciona entre procesos.
+Nada falló funcionalmente en este hito.  La reanudación HITL del caso end-to-end terminó en ~2 segundos sin repetir los nodos LLM anteriores, lo que confirma que el checkpoint funciona entre procesos. Dos hallazgos posteriores al usar el sistema desde la red corporativa: el SDK imprimía `OPENAI_API_KEY is not set, skipping trace export` (aviso benigno de exportación de trazas, silenciado con `set_tracing_disabled`) y las llamadas a Gemini fallaban con `APIConnectionError` por inspección TLS del proxy (`CERTIFICATE_VERIFY_FAILED: self signed certificate in certificate chain`), corregido usando el almacén de certificados del sistema con `truststore`, sin desactivar la verificación. Durante ambos fallos el retry del Hito 04 y la degradación a aclaración se comportaron como se diseñaron.
 
 ### Qué aprendí
 

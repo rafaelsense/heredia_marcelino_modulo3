@@ -12,6 +12,7 @@ dependencies=[
   "python-dotenv",
   "pydantic>=2.8",
   "typing-extensions>=4.12",
+  "truststore>=0.10.5",
 ]
 
 [build-system]

@@ -2,7 +2,8 @@
 
 import os
 
-from agents import AsyncOpenAI, OpenAIChatCompletionsModel
+import truststore
+from agents import AsyncOpenAI, OpenAIChatCompletionsModel, set_tracing_disabled
 
 BASE_URLS = {
     "openai": None,  # El SDK usa https://api.openai.com/v1 por defecto.
@@ -51,8 +52,23 @@ def modelo_embeddings() -> str:
     return os.getenv("EMBEDDING_MODEL") or os.getenv("OPENAI_EMBEDDING_MODEL") or por_defecto
 
 
+def preparar_entorno_sdk() -> None:
+    """Ajusta el entorno del SDK antes de cualquier llamada al proveedor.
+
+    - Desactiva la exportación de trazas: el SDK busca OPENAI_API_KEY para
+      enviarlas a la plataforma de OpenAI; con otro proveedor solo es ruido.
+    - Usa el almacén de certificados del sistema: en redes con inspección TLS
+      (proxy corporativo) incluye el certificado raíz del proxy; certifi no,
+      y la conexión falla con CERTIFICATE_VERIFY_FAILED. La verificación TLS
+      sigue activa.
+    """
+    set_tracing_disabled(True)
+    truststore.inject_into_ssl()
+
+
 def build_model():
     """Construye el modelo configurado sin exponer credenciales en el código."""
+    preparar_entorno_sdk()
     provider, base_url, api_key = resolver_proveedor()
     model_name = os.getenv("MODEL_NAME") or MODELOS_POR_DEFECTO.get(
         provider, MODELOS_POR_DEFECTO["openai"]

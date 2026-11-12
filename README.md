@@ -17,7 +17,7 @@ La semilla determina la capacidad diaria, la ventana estándar de entrega y el c
 
 Las pruebas, el router determinista y el workflow en modo offline no necesitan credenciales. Para ejecutar el router por modelo/híbrido, reconstruir el índice RAG real o extraer solicitudes en lenguaje natural, copia `.env.example` como `.env` y configura `PROVIDER_API_KEY`; el archivo `.env` no se versiona.
 
-Por compatibilidad comprobada con Python 3.11.0, el proyecto fija `openai-agents==0.0.17` y `openai==2.9.0`.
+Por compatibilidad comprobada con Python 3.11.0, el proyecto fija `openai-agents==0.0.17` y `openai==2.9.0`. Además, las llamadas al proveedor usan el almacén de certificados del sistema (paquete `truststore`): en redes con inspección TLS (proxy corporativo) el bundle `certifi` no incluye el certificado raíz del proxy y la conexión falla con `CERTIFICATE_VERIFY_FAILED`. La verificación TLS permanece activa.
 
 ## Instalación y verificación
 

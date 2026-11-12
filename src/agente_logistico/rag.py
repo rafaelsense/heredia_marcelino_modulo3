@@ -12,7 +12,7 @@ from pathlib import Path
 
 from openai import OpenAI
 
-from .modelo import modelo_embeddings, resolver_proveedor
+from .modelo import modelo_embeddings, preparar_entorno_sdk, resolver_proveedor
 
 RUTA_RAIZ = Path(__file__).resolve().parents[2]
 DOCS_DIR = RUTA_RAIZ / "docs"
@@ -62,6 +62,7 @@ def _cosine(a: list[float], b: list[float]) -> float:
 
 def _cliente_embeddings() -> OpenAI:
     """Crea el cliente de embeddings según el proveedor configurado."""
+    preparar_entorno_sdk()
     _, base_url, api_key = resolver_proveedor()
     return OpenAI(api_key=api_key, **({"base_url": base_url} if base_url else {}))
 

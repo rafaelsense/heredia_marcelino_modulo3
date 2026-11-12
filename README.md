@@ -6,7 +6,7 @@ Proyecto del Módulo 3 para evaluar compromisos de entrega B2B de AndesSupply.
 - **Variante:** Logística
 - **Caso:** `LOG-001`
 - **Semilla:** `6739`
-- **Estado actual:** Hito 05, MCP: desacoplar
+- **Estado actual:** proyecto completo (Hitos 1-6)
 
 La semilla determina la capacidad diaria, la ventana estándar de entrega y el costo del despacho extraordinario. Los datos son sintéticos y la fecha de referencia es fija para que las ejecuciones sean reproducibles.
 
@@ -113,6 +113,7 @@ docs/
   politica_despacho_extraordinario.md
   responsabilidades.md
   workflow.md
+  reflexion.md         # Reflexión final: limitaciones, riesgos y producción
 data/
   router_cases.json
 tests/                 # Pruebas del escenario, RAG, SQL, tools, router y workflow
@@ -120,3 +121,11 @@ evidencias/            # Salidas reales de verificación
 ```
 
 La ruta `WORKFLOW` ya ejecuta el grafo con estado; retry, checkpoint e HITL están integrados (Hito 04) y las capacidades se exponen por MCP (Hito 05).
+
+## Documentos de entrega
+
+- `HITOS.md`: registro de los seis hitos (qué se construyó, qué falló, qué se aprendió, evidencia).
+- `EVIDENCIAS.md`: comandos y resultados de verificación por hito.
+- `DECISIONES.md`: 11 decisiones con alternativas, trade-off, riesgo y cambio en producción.
+- `docs/reflexion.md`: reflexión final (qué es probabilístico vs. determinista, riesgos, producción).
+- `git_log.txt`: historial de commits del proyecto.

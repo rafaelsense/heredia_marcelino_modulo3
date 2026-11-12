@@ -1,0 +1,11 @@
+00a70df 2026-11-10 Hito 6: integración y reflexión
+b7a6b9d 2026-10-28 Hito 5: servidor MCP desacoplado
+a3037bf 2026-10-28 Hito 4: retry, checkpoint y HITL
+e240a92 2026-10-27 Calibrar umbral RAG con medicion reproducible
+b0b752c 2026-10-27 Verificar ejecución real con Gemini y calibrar umbral RAG
+62c154c 2026-10-27 Usar Gemini 3.8 Flash como modelo por defecto
+9e2ac7c 2026-10-27 Estandarizar PROVIDER_API_KEY para OpenAI y Gemini
+e7da5dd 2026-10-27 Soportar Gemini como proveedor OpenAI-compatible
+57af3e9 2026-10-24 Hito 3: workflow con estado
+3526f9d 2026-10-19 Hito 2: router, RAG, SQL y tools
+d801e61 2026-10-18 Hito 1: datos y reglas reproducibles

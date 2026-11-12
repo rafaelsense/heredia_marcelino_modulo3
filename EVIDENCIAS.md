@@ -325,3 +325,46 @@ uv run pytest
 Resultado: **84 passed**. Salida: `evidencias/hito05_pytest.log`.
 
 Cobertura nueva: servidor MCP como proceso separado, listado de tools/recursos/prompts, tool de stock insuficiente por MCP, inyección SQL tratada como parámetro por MCP, lectura de política como recurso y prompt renderizado con argumentos.
+
+## Hito 06
+
+### Verificación integral
+
+```bash
+uv sync
+uv run pytest
+```
+
+Resultado: entorno auditado sin cambios y **84 passed**. Salida: `evidencias/hito06_pytest.log`.
+
+### Caso end-to-end con Gemini real
+
+```bash
+# Ruta directa: extracción LLM → SQL + capacidad + RAG → reglas → confirmado
+uv run python -m agente_logistico --id-hilo hito06-directo \
+  --solicitud "Andes Manufactura (C-1003) necesita 6 EDGE-ORIN para el 2026-03-19"
+```
+
+Resultado: `confirmado`, despacho normal, con fuentes `[SQL:clientes]`, `[SQL:inventario]`, `[SQL:reservas_capacidad]` y `[RAG:politica_despacho_extraordinario.md#...]`. Salida: `evidencias/hito06_endtoend_directo_gemini.log`.
+
+```bash
+# Ruta HITL: excepción → pausa con interrupt() → reanudación desde otro proceso
+uv run python -m agente_logistico --id-hilo hito06-hitl \
+  --solicitud "C-1004 pide 12 EDGE-ORIN urgente para el 2026-03-17"
+uv run python -m agente_logistico --reanudar --id-hilo hito06-hitl \
+  --decision aprobado --supervisor "María Torres"
+```
+
+Resultados: pausa `pendiente_aprobacion` con costo extraordinario USD 400 y la instrucción de reanudación (`evidencias/hito06_endtoend_hitl_pausa_gemini.log`); reanudación aprobada → `confirmado` con despacho extraordinario, completada en ~2 segundos sin repetir los nodos LLM anteriores gracias al checkpoint SQLite (`evidencias/hito06_endtoend_hitl_reanudado_gemini.log`).
+
+### Integración MCP
+
+```bash
+uv run python -m agente_logistico.cliente_mcp
+```
+
+Resultado: las 4 tools, los 2 recursos `politica://...` y el prompt `evaluar_compromiso` operativos por stdio, consumiendo la misma capa de servicios que el workflow. Salida: `evidencias/hito06_mcp_integracion.log`.
+
+### Documentos de cierre
+
+`docs/reflexion.md` (limitaciones y riesgos reales) y `git_log.txt` (historial del proyecto).

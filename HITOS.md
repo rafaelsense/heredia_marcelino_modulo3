@@ -186,4 +186,32 @@ El agente sobre MCP queda como vía opcional (`usar_mcp`) en vez de obligatoria:
 
 ## Hito 06 — Integración y reflexión
 
-**Estado:** pendiente.
+**Estado:** completado y pendiente de revisión del estudiante.
+
+### Qué se construyó
+
+- Caso end-to-end reproducible ejecutado con Gemini real: ruta directa confirmada y ruta HITL completa (pausa `pendiente_aprobacion` + reanudación aprobada desde otro proceso), más verificación de la integración MCP con el cliente puro.
+- `docs/reflexion.md`: reflexión final con la arquitectura integrada, la frontera probabilístico/determinista, cambios necesarios para operar con SAP/ERP/CRM reales, el mayor riesgo del diseño (extracción de lenguaje natural), qué se simplificaría al mantenerlo un año y las cinco limitaciones reales declaradas.
+- `git_log.txt` generado desde el historial real. El material de preparación del video (guion narrado y enlace) se mantiene fuera del repositorio como material personal del estudiante, por decisión propia.
+- Verificación integral final: `uv sync` + suite completa en verde.
+
+### Qué falló
+
+Nada falló funcionalmente en este hito.  La reanudación HITL del caso end-to-end terminó en ~2 segundos sin repetir los nodos LLM anteriores, lo que confirma que el checkpoint funciona entre procesos.
+
+### Qué aprendí
+
+Integrar no es juntar piezas sino verificar la frontera entre ellas: el caso completo recorre router, SQL, RAG, reglas, workflow, checkpoint, HITL y MCP sin que el LLM decida nada objetivo. También que la reflexión es más útil cuando nombra riesgos concretos (la extracción semánticamente errada que pasa la validación sintáctica) que cuando enumera fortalezas.
+
+### Qué decisión cambió después de probar
+
+La verificación end-to-end con la clave real confirmó que el modo híbrido/offline no era un atajo sino una necesidad: con 5 solicitudes por minuto del nivel gratuito, las evidencias masivas solo son reproducibles con el extractor estructurado y el embedder léxico, mientras las ejecuciones con LLM se reservan para los casos representativos.
+
+### Evidencia
+
+- `evidencias/hito06_pytest.log` (84 passed tras `uv sync`)
+- `evidencias/hito06_endtoend_directo_gemini.log` (caso directo confirmado con Gemini real)
+- `evidencias/hito06_endtoend_hitl_pausa_gemini.log` (excepción pausada, USD 400)
+- `evidencias/hito06_endtoend_hitl_reanudado_gemini.log` (reanudación aprobada por la supervisora, sin repetir nodos)
+- `evidencias/hito06_mcp_integracion.log` (tools, recursos y prompt por stdio)
+- `docs/reflexion.md`, `git_log.txt`

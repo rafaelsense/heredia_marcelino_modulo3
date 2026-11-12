@@ -1,4 +1,5 @@
-00a70df 2026-11-10 Hito 6: integración y reflexión
+974e288 2026-11-11 Corregir conexión TLS tras proxy corporativo y silenciar aviso de trazas
+1da218e 2026-11-11 Hito 6: integración y reflexión
 b7a6b9d 2026-10-28 Hito 5: servidor MCP desacoplado
 a3037bf 2026-10-28 Hito 4: retry, checkpoint y HITL
 e240a92 2026-10-27 Calibrar umbral RAG con medicion reproducible
